@@ -5,6 +5,7 @@ New tasks go in the phase they belong to.
 
 ## Now
 
+- [ ] **Reminder spike before P2** — protocol in `spikes/reminders/`
 - [ ] P2 — data layer (schema, models, schedule engine, tests)
 
 ## P0 — Research & decisions
@@ -62,6 +63,9 @@ New tasks go in the phase they belong to.
 - [ ] All strings wrapped in `qsTr()`
 
 ## P4 — Reminders (highest risk)
+
+> The spike in `spikes/reminders/` runs **before P2**, not here. Its result picks the path
+> below and updates D-006/D-013 first.
 
 - [ ] **Spike:** write a repeating event into a **local** calendar via
       `nemo-qml-plugin-calendar` with the `Calendar` permission; confirm the alarm fires when
