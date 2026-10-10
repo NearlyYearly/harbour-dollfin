@@ -35,10 +35,19 @@ routes (oral, sublingual, gel, patch, injection). They need to:
 - **Cover**: today's doses with per-dose status (emoji); tapping the cover opens the app.
 - No `Internet` permission. No account.
 
+### v1.2 — Labs (blood results)
+
+- **Labs**: record blood results with a draw date, value, unit, lab and notes. Hormones first
+  (estradiol, testosterone, prolactin, LH/FSH, SHBG ·), plus liver, kidney, blood count,
+  lipids and the like; any other analyte via **Custom** (D-024).
+- **Generic reference ranges** from Dutch standards, shown neutrally, HRT hormones descriptive
+  only (D-025).
+- List + add/edit/delete. Graphs are the next v1.x step (D-026).
+
 ### v0.2+ (backlog, not now)
 
 - **Hormone graphs for all tracked analytes** (estradiol, testosterone, and anything else the
-  user records), clearly labelled illustrative only.
+  user records), clearly labelled illustrative only — the next v1.x step (D-026).
 - **Application-site tracking** for gel, patch and injection (rotation, last-used site).
 - Adherence statistics.
 - App lock (PIN via `Sailfish.Secrets`).
@@ -88,6 +97,11 @@ Rules: UTC timestamps stored, local time rendered; `intake.site` and the `level`
 route/analyte-agnostic so application-site tracking and all-analyte graphs can be added later
 without a breaking migration. Every schema change gets a migration and a `DECISIONS.md` entry.
 
+`level` is used as-is for Labs (v1.2, D-024): `analyte` stores a catalogue **key** for a known
+analyte or the user's text for a Custom one, `taken_at` is the draw date, `unit` is the fixed
+dropdown value. Because no UI wrote to `level` before v1.2 there is no data to migrate; the
+generic backup dump already covers it.
+
 ## Phases & milestones
 
 | Phase | Outcome |
@@ -102,6 +116,7 @@ without a breaking migration. Every schema change gets a migration and a `DECISI
 | **P7 Polish** | Device test matrix, covers, empty/error states, accessibility, performance. |
 | **P8 Publish** | Signed RPM, changelog, OpenRepos project page, Storeman instructions. |
 | **P9 Distribution+** | OBS/Chum build; evaluate Harbour submission. |
+| **P10 Labs (v1.2)** | Labs list + add/edit/delete, analyte catalogue, generic reference ranges. |
 
 A phase is done only when its tasks in `TODO.md` are checked and the change meets the
 definition of done in `AGENTS.md`.
@@ -117,6 +132,7 @@ definition of done in `AGENTS.md`.
 | R5 | Storeman discoverability & maintenance | Clear OpenRepos listing, screenshots, changelog, versioned releases |
 | R6 | Level graph seen as medical guidance | Graphs cover all analytes, simulation/labels only, opt-in, disclaimers; never a dosing recommendation |
 | R7 | Calendar reminders leak to a synced account | Only write to a local calendar; warn otherwise; keep `.ics` export |
+| R8 | Lab reference ranges read as medical guidance | Generic ranges only, `M/F` shown neutrally, descriptive (not targeted) for HRT hormones, no alarm colour, clinical review before release (D-025) |
 
 ## Release & publishing (Storeman)
 

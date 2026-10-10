@@ -5,6 +5,7 @@
 // Sailfish target). Run with scripts/run-tests.sh, or from an SDK build shell:
 //   cd tests/tst_core && qmake && make && ./tst_core
 
+#include "core/analytes.h"
 #include "core/backup.h"
 #include "core/database.h"
 #include "core/ical.h"
@@ -15,6 +16,7 @@
 #include <QDate>
 #include <QDebug>
 #include <QDir>
+#include <QSet>
 #include <QTemporaryDir>
 #include <QTime>
 
@@ -313,6 +315,134 @@ static void testFirstOccurrenceAfter()
     CHECK(!ScheduleEngine::firstOccurrenceAfter(paused, utc("2026-01-02T09:00")).isValid());
 }
 
+static void testAnalyteCatalog()
+{
+    const QList<AnalyteRef> catalog = Analytes::catalog();
+    CHECK(!catalog.isEmpty());
+
+    const QStringList units = Analytes::units();
+    QSet<QString> seen;
+    for (const AnalyteRef &analyte : catalog) {
+        CHECK(!analyte.key.isEmpty());
+        CHECK(!analyte.label.isEmpty());
+        CHECK(!analyte.unit.isEmpty());
+        CHECK(!analyte.reference.isEmpty());
+        CHECK(units.contains(analyte.unit));
+        CHECK(!seen.contains(analyte.key)); // keys unique
+        seen.insert(analyte.key);
+        CHECK_EQ(Analytes::label(analyte.key), analyte.label);
+    }
+
+    CHECK(Analytes::find(QStringLiteral("estradiol")) != nullptr);
+    CHECK(Analytes::find(QStringLiteral("no_such_analyte")) == nullptr);
+
+    // Graph bands only for clear two-sided ranges (D-029).
+    const AnalyteRef *tsh = Analytes::find(QStringLiteral("tsh"));
+    CHECK(tsh && tsh->hasBand);
+    if (tsh) {
+        CHECK_EQ(tsh->bandLow, 0.4);
+        CHECK_EQ(tsh->bandHigh, 4.0);
+    }
+    const AnalyteRef *testosterone = Analytes::find(QStringLiteral("testosterone"));
+    CHECK(testosterone && !testosterone->hasBand); // sex-specific, no band
+    // Unknown keys fall back to the stored text (custom analytes).
+    CHECK_EQ(Analytes::label(QStringLiteral("My custom test")),
+             QStringLiteral("My custom test"));
+}
+
+static void testAnalyteSummary()
+{
+    Level older;
+    older.analyte = QStringLiteral("estradiol");
+    older.value = 100;
+    older.unit = QStringLiteral("pmol/L");
+    older.takenAt = utc("2026-03-01T00:00");
+
+    Level newer;
+    newer.analyte = QStringLiteral("estradiol");
+    newer.value = 150;
+    newer.unit = QStringLiteral("pmol/L");
+    newer.takenAt = utc("2026-04-01T00:00");
+
+    Level custom;
+    custom.analyte = QStringLiteral("My test");
+    custom.value = 5;
+    custom.unit = QStringLiteral("U/L");
+    custom.takenAt = utc("2026-02-01T00:00");
+
+    // Deliberately unsorted input: the newest taken_at must win.
+    const QList<AnalyteSummary> s =
+        Analytes::summarize(QList<Level>() << custom << older << newer);
+    CHECK_EQ(s.size(), 2);
+    CHECK_EQ(s.first().key, QStringLiteral("estradiol")); // newest date first
+    CHECK_EQ(s.first().count, 2);
+    CHECK_EQ(s.first().value, 150.0);
+    CHECK_EQ(s.first().date, QDate(2026, 4, 1));
+    CHECK_EQ(s.first().referenceUnit, QStringLiteral("pmol/L"));
+    CHECK(!s.first().custom);
+    CHECK(s.at(1).custom);
+    CHECK_EQ(s.at(1).label, QStringLiteral("My test"));
+    CHECK_EQ(s.at(1).count, 1);
+    CHECK(s.at(1).reference.isEmpty());
+
+    Level tshLevel;
+    tshLevel.analyte = QStringLiteral("tsh");
+    tshLevel.value = 2.0;
+    tshLevel.unit = QStringLiteral("mU/L");
+    tshLevel.takenAt = utc("2026-05-01T00:00");
+    const QList<AnalyteSummary> t = Analytes::summarize(QList<Level>() << tshLevel);
+    CHECK_EQ(t.size(), 1);
+    CHECK(t.first().hasBand);
+    CHECK_EQ(t.first().bandLow, 0.4);
+    CHECK_EQ(t.first().bandHigh, 4.0);
+}
+
+static void testLevelCrud()
+{
+    QTemporaryDir dir;
+    Database db;
+    CHECK(db.open(dir.path() + "/levels.db"));
+    Store store(db);
+
+    Level l;
+    l.takenAt = utc("2026-03-01T00:00");
+    l.analyte = QStringLiteral("estradiol");
+    l.value = 123.4;
+    l.unit = QStringLiteral("pmol/L");
+    l.lab = QStringLiteral("AMC");
+    l.notes = QStringLiteral("morning");
+    CHECK(store.addLevel(l));
+    CHECK(l.id > 0);
+
+    bool ok = false;
+    Level read = store.level(l.id, &ok);
+    CHECK(ok);
+    CHECK_EQ(read.analyte, QStringLiteral("estradiol"));
+    CHECK_EQ(read.value, 123.4);
+    CHECK_EQ(read.unit, QStringLiteral("pmol/L"));
+    CHECK_EQ(read.lab, QStringLiteral("AMC"));
+
+    read.value = 150.0;
+    read.analyte = QStringLiteral("My custom test");
+    CHECK(store.updateLevel(read));
+    read = store.level(l.id, &ok);
+    CHECK(ok);
+    CHECK_EQ(read.value, 150.0);
+    CHECK_EQ(read.analyte, QStringLiteral("My custom test"));
+
+    Level second;
+    second.takenAt = utc("2026-04-01T00:00");
+    second.analyte = QStringLiteral("alt");
+    second.value = 20;
+    CHECK(store.addLevel(second));
+    const QList<Level> all = store.levels();
+    CHECK_EQ(all.size(), 2);
+    CHECK_EQ(all.first().analyte, QStringLiteral("alt")); // newest first
+
+    CHECK(store.removeLevel(l.id));
+    CHECK_EQ(store.levels().size(), 1);
+}
+
 static void testIcalBuilder()
 {
     Regimen r;
@@ -392,6 +522,13 @@ static void testStockAndBackup()
     stock.source = QStringLiteral("Pharmacy");
     CHECK(store.setStock(stock));
 
+    Level lab;
+    lab.takenAt = utc("2026-02-10T00:00");
+    lab.analyte = QStringLiteral("testosterone");
+    lab.value = 18.5;
+    lab.unit = QStringLiteral("nmol/L");
+    CHECK(store.addLevel(lab));
+
     bool ok = false;
     const Stock readBack = store.stock(m.id, &ok);
     CHECK(ok);
@@ -415,6 +552,9 @@ static void testStockAndBackup()
     CHECK_EQ(restoredStore.medications().size(), 1);
     CHECK_EQ(restoredStore.regimens().size(), 1);
     CHECK_EQ(restoredStore.intakes().size(), 1);
+    CHECK_EQ(restoredStore.levels().size(), 1);
+    if (!restoredStore.levels().isEmpty())
+        CHECK_EQ(restoredStore.levels().first().value, 18.5);
     const QList<Medication> meds = restoredStore.medications();
     if (!meds.isEmpty()) {
         const Stock restoredStock = restoredStore.stock(meds.first().id, &ok);
@@ -444,6 +584,9 @@ int main(int argc, char **argv)
     testScheduleMonthYearBoundary();
     testScheduleDst();
     testFirstOccurrenceAfter();
+    testAnalyteCatalog();
+    testAnalyteSummary();
+    testLevelCrud();
     testIcalBuilder();
     testStockAndBackup();
 

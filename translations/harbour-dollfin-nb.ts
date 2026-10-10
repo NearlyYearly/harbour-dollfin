@@ -2,10 +2,72 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nb_NO">
 <context>
+    <name>AnalyteGraphPage</name>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referanse (%1): %2</translation>
+    </message>
+    <message>
+        <source>Unit</source>
+        <translation>Enhet</translation>
+    </message>
+    <message>
+        <source>Illustrative only, not medical advice.</source>
+        <translation>Illustrative only, not medical advice.</translation>
+    </message>
+    <message>
+        <source>Results are shown per unit; they are not converted.</source>
+        <translation>Results are shown per unit; they are not converted.</translation>
+    </message>
+    <message>
+        <source>Tap a point to see that result.</source>
+        <translation>Tap a point to see that result.</translation>
+    </message>
+</context>
+<context>
+    <name>AnalyteResultsPage</name>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referanse (%1): %2</translation>
+    </message>
+    <message>
+        <source>Ranges vary by lab and are shown for reference only.</source>
+        <translation>Referanseområder varierer mellom laboratorier og vises kun som veiledning.</translation>
+    </message>
+    <message>
+        <source>Add result</source>
+        <translation>Legg til resultat</translation>
+    </message>
+    <message>
+        <source>No results yet</source>
+        <translation>Ingen resultater ennå</translation>
+    </message>
+    <message>
+        <source>Pull down to add one</source>
+        <translation>Dra ned for å legge til en</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Rediger</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Slett</translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation>Sletter</translation>
+    </message>
+    <message>
+        <source>Graph</source>
+        <translation>Graph</translation>
+    </message>
+</context>
+<context>
     <name>CoverPage</name>
     <message>
         <source>Dollfin</source>
-        <translation>Dollfin</translation>
+        <translation type="vanished">Dollfin</translation>
     </message>
     <message>
         <source>Today</source>
@@ -14,6 +76,289 @@
     <message>
         <source>No doses today</source>
         <translation>Ingen doser i dag</translation>
+    </message>
+</context>
+<context>
+    <name>Dollfin</name>
+    <message>
+        <source>Estradiol (E2)</source>
+        <translation>Østradiol (E2)</translation>
+    </message>
+    <message>
+        <source>Varies with cycle / menopause / HRT</source>
+        <translation>Varierer med syklus / overgangsalder / HRT</translation>
+    </message>
+    <message>
+        <source>Estrone (E1)</source>
+        <translation>Østron (E1)</translation>
+    </message>
+    <message>
+        <source>Varies with context</source>
+        <translation>Varierer med kontekst</translation>
+    </message>
+    <message>
+        <source>Testosterone (total)</source>
+        <translation>Testosteron (totalt)</translation>
+    </message>
+    <message>
+        <source>M 8-30 · F 0.5-2.5</source>
+        <translation>M 8-30 · K 0.5-2.5</translation>
+    </message>
+    <message>
+        <source>Testosterone (free)</source>
+        <translation>Testosteron (fritt)</translation>
+    </message>
+    <message>
+        <source>M 170-500 · F under 30</source>
+        <translation>M 170-500 · K under 30</translation>
+    </message>
+    <message>
+        <source>Prolactin</source>
+        <translation>Prolaktin</translation>
+    </message>
+    <message>
+        <source>M under 15 · F under 25</source>
+        <translation>M under 15 · K under 25</translation>
+    </message>
+    <message>
+        <source>LH</source>
+        <translation>LH</translation>
+    </message>
+    <message>
+        <source>Varies with cycle · M 1.5-9</source>
+        <translation>Varierer med syklus · M 1.5-9</translation>
+    </message>
+    <message>
+        <source>FSH</source>
+        <translation>FSH</translation>
+    </message>
+    <message>
+        <source>Varies with cycle · M 1.5-12</source>
+        <translation>Varierer med syklus · M 1.5-12</translation>
+    </message>
+    <message>
+        <source>SHBG</source>
+        <translation>SHBG</translation>
+    </message>
+    <message>
+        <source>M 20-70 · F 40-120</source>
+        <translation>M 20-70 · K 40-120</translation>
+    </message>
+    <message>
+        <source>Progesterone</source>
+        <translation>Progesteron</translation>
+    </message>
+    <message>
+        <source>M under 1 · F follicular under 3, luteal 15-80</source>
+        <translation>M under 1 · K follikulær under 3, luteal 15-80</translation>
+    </message>
+    <message>
+        <source>DHEA-S</source>
+        <translation>DHEA-S</translation>
+    </message>
+    <message>
+        <source>Age-dependent; roughly 2-10</source>
+        <translation>Alderavhengig; omtrent 2-10</translation>
+    </message>
+    <message>
+        <source>Cortisol</source>
+        <translation>Cortisol</translation>
+    </message>
+    <message>
+        <source>Morning 150-550 (diurnal)</source>
+        <translation>Morgen 150-550 (døgnrytme)</translation>
+    </message>
+    <message>
+        <source>TSH</source>
+        <translation>TSH</translation>
+    </message>
+    <message>
+        <source>0.4-4.0</source>
+        <translation>0.4-4.0</translation>
+    </message>
+    <message>
+        <source>Free T4</source>
+        <translation>Fritt T4</translation>
+    </message>
+    <message>
+        <source>8-22</source>
+        <translation>8-22</translation>
+    </message>
+    <message>
+        <source>Free T3</source>
+        <translation>Fritt T3</translation>
+    </message>
+    <message>
+        <source>3.5-6.5</source>
+        <translation>3.5-6.5</translation>
+    </message>
+    <message>
+        <source>ALT (ALAT)</source>
+        <translation>ALT (ALAT)</translation>
+    </message>
+    <message>
+        <source>M under 40 · F under 30</source>
+        <translation>M under 40 · K under 30</translation>
+    </message>
+    <message>
+        <source>AST (ASAT)</source>
+        <translation>AST (ASAT)</translation>
+    </message>
+    <message>
+        <source>M under 35 · F under 30</source>
+        <translation>M under 35 · K under 30</translation>
+    </message>
+    <message>
+        <source>GGT (gamma-GT)</source>
+        <translation>GGT (gamma-GT)</translation>
+    </message>
+    <message>
+        <source>M under 55 · F under 40</source>
+        <translation>M under 55 · K under 40</translation>
+    </message>
+    <message>
+        <source>ALP (alkaline phosphatase)</source>
+        <translation>ALP (alkalisk fosfatase)</translation>
+    </message>
+    <message>
+        <source>40-120</source>
+        <translation>40-120</translation>
+    </message>
+    <message>
+        <source>Bilirubin (total)</source>
+        <translation>Bilirubin (totalt)</translation>
+    </message>
+    <message>
+        <source>under 17</source>
+        <translation>under 17</translation>
+    </message>
+    <message>
+        <source>Albumin</source>
+        <translation>Albumin</translation>
+    </message>
+    <message>
+        <source>35-50</source>
+        <translation>35-50</translation>
+    </message>
+    <message>
+        <source>Creatinine</source>
+        <translation>Kreatinin</translation>
+    </message>
+    <message>
+        <source>M 65-115 · F 50-95</source>
+        <translation>M 65-115 · K 50-95</translation>
+    </message>
+    <message>
+        <source>eGFR</source>
+        <translation>eGFR</translation>
+    </message>
+    <message>
+        <source>above 90</source>
+        <translation>over 90</translation>
+    </message>
+    <message>
+        <source>Hemoglobin</source>
+        <translation>Hemoglobin</translation>
+    </message>
+    <message>
+        <source>M 8.5-10.5 · F 7.5-10.0</source>
+        <translation>M 8.5-10.5 · K 7.5-10.0</translation>
+    </message>
+    <message>
+        <source>Hematocrit</source>
+        <translation>Hematokrit</translation>
+    </message>
+    <message>
+        <source>M 0.40-0.50 · F 0.35-0.45</source>
+        <translation>M 0.40-0.50 · K 0.35-0.45</translation>
+    </message>
+    <message>
+        <source>Ferritin</source>
+        <translation>Ferritin</translation>
+    </message>
+    <message>
+        <source>M 30-300 · F 15-200</source>
+        <translation>M 30-300 · K 15-200</translation>
+    </message>
+    <message>
+        <source>LDL cholesterol</source>
+        <translation>LDL-kolesterol</translation>
+    </message>
+    <message>
+        <source>under 3.0</source>
+        <translation>under 3.0</translation>
+    </message>
+    <message>
+        <source>HDL cholesterol</source>
+        <translation>HDL-kolesterol</translation>
+    </message>
+    <message>
+        <source>M above 1.0 · F above 1.2</source>
+        <translation>M over 1.0 · K over 1.2</translation>
+    </message>
+    <message>
+        <source>Triglycerides</source>
+        <translation>Triglyserider</translation>
+    </message>
+    <message>
+        <source>under 2.0</source>
+        <translation>under 2.0</translation>
+    </message>
+    <message>
+        <source>Glucose (fasting)</source>
+        <translation>Glukose (fastende)</translation>
+    </message>
+    <message>
+        <source>4.0-6.0</source>
+        <translation>4.0-6.0</translation>
+    </message>
+    <message>
+        <source>HbA1c</source>
+        <translation>HbA1c</translation>
+    </message>
+    <message>
+        <source>20-42</source>
+        <translation>20-42</translation>
+    </message>
+    <message>
+        <source>Sodium</source>
+        <translation>Natrium</translation>
+    </message>
+    <message>
+        <source>135-145</source>
+        <translation>135-145</translation>
+    </message>
+    <message>
+        <source>Potassium</source>
+        <translation>Kalium</translation>
+    </message>
+    <message>
+        <source>3.5-5.0</source>
+        <translation>3.5-5.0</translation>
+    </message>
+    <message>
+        <source>Calcium (total)</source>
+        <translation>Kalsium (totalt)</translation>
+    </message>
+    <message>
+        <source>2.20-2.60</source>
+        <translation>2.20-2.60</translation>
+    </message>
+    <message>
+        <source>Vitamin D (25-OH)</source>
+        <translation>Vitamin D (25-OH)</translation>
+    </message>
+    <message>
+        <source>50-150</source>
+        <translation>50-150</translation>
+    </message>
+    <message>
+        <source>Vitamin B12</source>
+        <translation>Vitamin B12</translation>
+    </message>
+    <message>
+        <source>150-600</source>
+        <translation>150-600</translation>
     </message>
 </context>
 <context>
@@ -41,6 +386,112 @@
     <message>
         <source>skipped</source>
         <translation>hoppet over</translation>
+    </message>
+</context>
+<context>
+    <name>LabEditPage</name>
+    <message>
+        <source>Custom</source>
+        <translation>Egendefinert</translation>
+    </message>
+    <message>
+        <source>Reference: %1</source>
+        <translation type="vanished">Referanse: %1</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Lagre</translation>
+    </message>
+    <message>
+        <source>Edit result</source>
+        <translation>Rediger resultat</translation>
+    </message>
+    <message>
+        <source>New result</source>
+        <translation>Nytt resultat</translation>
+    </message>
+    <message>
+        <source>Analyte</source>
+        <translation>Analytt</translation>
+    </message>
+    <message>
+        <source>Custom analyte</source>
+        <translation>Egendefinert analytt</translation>
+    </message>
+    <message>
+        <source>Any test you had done</source>
+        <translation>Enhver test du har tatt</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>Verdi</translation>
+    </message>
+    <message>
+        <source>Unit</source>
+        <translation>Enhet</translation>
+    </message>
+    <message>
+        <source>Draw date</source>
+        <translation>Prøvedato</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation>Laboratorium</translation>
+    </message>
+    <message>
+        <source>Optional</source>
+        <translation type="vanished">Valgfritt</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notater</translation>
+    </message>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referanse (%1): %2</translation>
+    </message>
+    <message>
+        <source>Ranges vary by lab and are shown for reference only.</source>
+        <translation>Referanseområder varierer mellom laboratorier og vises kun som veiledning.</translation>
+    </message>
+    <message>
+        <source>Hospital, clinic or lab</source>
+        <translation>Sykehus, klinikk eller lab</translation>
+    </message>
+    <message>
+        <source>Anything you want to remember</source>
+        <translation>Alt du vil huske</translation>
+    </message>
+</context>
+<context>
+    <name>LabsPage</name>
+    <message>
+        <source>Labs</source>
+        <translation>Labresultater</translation>
+    </message>
+    <message>
+        <source>Add result</source>
+        <translation>Legg til resultat</translation>
+    </message>
+    <message>
+        <source>No results yet</source>
+        <translation>Ingen resultater ennå</translation>
+    </message>
+    <message>
+        <source>Pull down to add a blood test result</source>
+        <translation>Dra ned for å legge til et blodprøvesvar</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="vanished">Rediger</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="vanished">Slett</translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation type="vanished">Sletter</translation>
     </message>
 </context>
 <context>
@@ -501,6 +952,10 @@
         <source>This replaces everything currently in Dollfin with the contents of the backup file.</source>
         <translation>Dette erstatter alt som nå ligger i Dollfin med innholdet i sikkerhetskopien.</translation>
     </message>
+    <message>
+        <source>Dollfin %1</source>
+        <translation>Dollfin %1</translation>
+    </message>
 </context>
 <context>
     <name>StockPage</name>
@@ -581,7 +1036,7 @@
     </message>
     <message>
         <source>No medications yet</source>
-        <translation>Ingen medisiner ennå</translation>
+        <translation type="vanished">Ingen medisiner ennå</translation>
     </message>
     <message>
         <source>Medications</source>
@@ -614,6 +1069,10 @@
     <message>
         <source>Undo</source>
         <translation>Angre</translation>
+    </message>
+    <message>
+        <source>Labs</source>
+        <translation>Labresultater</translation>
     </message>
 </context>
 </TS>

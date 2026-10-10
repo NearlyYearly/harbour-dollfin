@@ -3,6 +3,7 @@
 
 #include "appcontroller.h"
 
+#include "core/analytes.h"
 #include "core/backup.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
@@ -43,6 +44,23 @@ QVariantMap medicationToMap(const Medication &m)
     if (!m.form.isEmpty())
         detail = detail.isEmpty() ? m.form : (m.form + QStringLiteral(" · ") + detail);
     map[QStringLiteral("detail")] = detail.trimmed();
+    return map;
+}
+
+QVariantMap levelToMap(const Level &l)
+{
+    const AnalyteRef *ref = Analytes::find(l.analyte);
+    QVariantMap map;
+    map[QStringLiteral("id")] = l.id;
+    map[QStringLiteral("analyteKey")] = l.analyte;
+    map[QStringLiteral("analyte")] = ref ? ref->label : l.analyte;
+    map[QStringLiteral("value")] = l.value;
+    map[QStringLiteral("unit")] = l.unit;
+    map[QStringLiteral("takenAt")] = l.takenAt.toLocalTime().date().toString(Qt::ISODate);
+    map[QStringLiteral("lab")] = l.lab;
+    map[QStringLiteral("notes")] = l.notes;
+    map[QStringLiteral("custom")] = ref == nullptr;
+    map[QStringLiteral("reference")] = ref ? ref->reference : QString();
     return map;
 }
 
@@ -241,6 +259,38 @@ QVariantList AppController::history() const
     return list;
 }
 
+QVariantList AppController::labs() const
+{
+    QVariantList list;
+    const QList<Level> items = m_store.levels();
+    for (const Level &l : items)
+        list.append(levelToMap(l));
+    return list;
+}
+
+QVariantList AppController::analyteSummaries() const
+{
+    QVariantList list;
+    const QList<AnalyteSummary> summaries = Analytes::summarize(m_store.levels());
+    for (const AnalyteSummary &s : summaries) {
+        QVariantMap map;
+        map[QStringLiteral("key")] = s.key;
+        map[QStringLiteral("label")] = s.label;
+        map[QStringLiteral("unit")] = s.unit;
+        map[QStringLiteral("referenceUnit")] = s.referenceUnit;
+        map[QStringLiteral("reference")] = s.reference;
+        map[QStringLiteral("value")] = s.value;
+        map[QStringLiteral("date")] = s.date.toString(Qt::ISODate);
+        map[QStringLiteral("count")] = s.count;
+        map[QStringLiteral("custom")] = s.custom;
+        map[QStringLiteral("hasBand")] = s.hasBand;
+        map[QStringLiteral("bandLow")] = s.bandLow;
+        map[QStringLiteral("bandHigh")] = s.bandHigh;
+        list.append(map);
+    }
+    return list;
+}
+
 QString AppController::todayLabel() const
 {
     return QDate::currentDate().toString(Qt::DefaultLocaleLongDate);
@@ -428,6 +478,67 @@ bool AppController::saveStock(int medicationId, double quantity, const QString &
     if (ok)
         emit changed();
     return ok;
+}
+
+// --- Labs / blood results (P10, D-024) -------------------------------------
+
+QVariantMap AppController::lab(int id) const
+{
+    return levelToMap(m_store.level(id));
+}
+
+bool AppController::saveLab(const QVariantMap &data)
+{
+    Level l;
+    l.id = data.value(QStringLiteral("id"), -1).toLongLong();
+    l.analyte = data.value(QStringLiteral("analyteKey")).toString().trimmed();
+    l.value = data.value(QStringLiteral("value")).toDouble();
+    l.unit = data.value(QStringLiteral("unit")).toString().trimmed();
+    l.lab = data.value(QStringLiteral("lab")).toString().trimmed();
+    l.notes = data.value(QStringLiteral("notes")).toString().trimmed();
+
+    const QDate date = QDate::fromString(data.value(QStringLiteral("takenAt")).toString(),
+                                         Qt::ISODate);
+    if (l.analyte.isEmpty() || !date.isValid())
+        return false;
+    l.takenAt = QDateTime(date, QTime(0, 0), Qt::LocalTime);
+
+    const bool ok = l.id >= 0 ? m_store.updateLevel(l) : m_store.addLevel(l);
+    if (ok)
+        emit changed();
+    return ok;
+}
+
+bool AppController::removeLab(int id)
+{
+    const bool ok = m_store.removeLevel(id);
+    if (ok)
+        emit changed();
+    return ok;
+}
+
+QVariantList AppController::analyteCatalog() const
+{
+    QVariantList list;
+    const QList<AnalyteRef> catalog = Analytes::catalog();
+    for (const AnalyteRef &analyte : catalog) {
+        QVariantMap map;
+        map[QStringLiteral("key")] = analyte.key;
+        map[QStringLiteral("label")] = analyte.label;
+        map[QStringLiteral("unit")] = analyte.unit;
+        map[QStringLiteral("reference")] = analyte.reference;
+        list.append(map);
+    }
+    return list;
+}
+
+QVariantList AppController::labUnits() const
+{
+    QVariantList list;
+    const QStringList units = Analytes::units();
+    for (const QString &unit : units)
+        list.append(unit);
+    return list;
 }
 
 QString AppController::backupPath() const

@@ -2,10 +2,72 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL">
 <context>
+    <name>AnalyteGraphPage</name>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referentie (%1): %2</translation>
+    </message>
+    <message>
+        <source>Unit</source>
+        <translation>Eenheid</translation>
+    </message>
+    <message>
+        <source>Illustrative only, not medical advice.</source>
+        <translation>Illustrative only, not medical advice.</translation>
+    </message>
+    <message>
+        <source>Results are shown per unit; they are not converted.</source>
+        <translation>Results are shown per unit; they are not converted.</translation>
+    </message>
+    <message>
+        <source>Tap a point to see that result.</source>
+        <translation>Tap a point to see that result.</translation>
+    </message>
+</context>
+<context>
+    <name>AnalyteResultsPage</name>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referentie (%1): %2</translation>
+    </message>
+    <message>
+        <source>Ranges vary by lab and are shown for reference only.</source>
+        <translation>Reeksen verschillen per lab en zijn alleen ter referentie.</translation>
+    </message>
+    <message>
+        <source>Add result</source>
+        <translation>Resultaat toevoegen</translation>
+    </message>
+    <message>
+        <source>No results yet</source>
+        <translation>Nog geen resultaten</translation>
+    </message>
+    <message>
+        <source>Pull down to add one</source>
+        <translation>Trek omlaag om er een toe te voegen</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Bewerken</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Graph</source>
+        <translation>Graph</translation>
+    </message>
+</context>
+<context>
     <name>CoverPage</name>
     <message>
         <source>Dollfin</source>
-        <translation>Dollfin</translation>
+        <translation type="vanished">Dollfin</translation>
     </message>
     <message>
         <source>Today</source>
@@ -14,6 +76,289 @@
     <message>
         <source>No doses today</source>
         <translation>Vandaag geen doses</translation>
+    </message>
+</context>
+<context>
+    <name>Dollfin</name>
+    <message>
+        <source>Estradiol (E2)</source>
+        <translation>Estradiol (E2)</translation>
+    </message>
+    <message>
+        <source>Varies with cycle / menopause / HRT</source>
+        <translation>Verschilt per cyclus / menopauze / HRT</translation>
+    </message>
+    <message>
+        <source>Estrone (E1)</source>
+        <translation>Estron (E1)</translation>
+    </message>
+    <message>
+        <source>Varies with context</source>
+        <translation>Verschilt per context</translation>
+    </message>
+    <message>
+        <source>Testosterone (total)</source>
+        <translation>Testosteron (totaal)</translation>
+    </message>
+    <message>
+        <source>M 8-30 · F 0.5-2.5</source>
+        <translation>M 8-30 · V 0.5-2.5</translation>
+    </message>
+    <message>
+        <source>Testosterone (free)</source>
+        <translation>Testosteron (vrij)</translation>
+    </message>
+    <message>
+        <source>M 170-500 · F under 30</source>
+        <translation>M 170-500 · V onder 30</translation>
+    </message>
+    <message>
+        <source>Prolactin</source>
+        <translation>Prolactine</translation>
+    </message>
+    <message>
+        <source>M under 15 · F under 25</source>
+        <translation>M onder 15 · V onder 25</translation>
+    </message>
+    <message>
+        <source>LH</source>
+        <translation>LH</translation>
+    </message>
+    <message>
+        <source>Varies with cycle · M 1.5-9</source>
+        <translation>Verschilt per cyclus · M 1.5-9</translation>
+    </message>
+    <message>
+        <source>FSH</source>
+        <translation>FSH</translation>
+    </message>
+    <message>
+        <source>Varies with cycle · M 1.5-12</source>
+        <translation>Verschilt per cyclus · M 1.5-12</translation>
+    </message>
+    <message>
+        <source>SHBG</source>
+        <translation>SHBG</translation>
+    </message>
+    <message>
+        <source>M 20-70 · F 40-120</source>
+        <translation>M 20-70 · V 40-120</translation>
+    </message>
+    <message>
+        <source>Progesterone</source>
+        <translation>Progesteron</translation>
+    </message>
+    <message>
+        <source>M under 1 · F follicular under 3, luteal 15-80</source>
+        <translation>M onder 1 · V folliculair onder 3, luteaal 15-80</translation>
+    </message>
+    <message>
+        <source>DHEA-S</source>
+        <translation>DHEA-S</translation>
+    </message>
+    <message>
+        <source>Age-dependent; roughly 2-10</source>
+        <translation>Leeftijdsafhankelijk; ruwweg 2-10</translation>
+    </message>
+    <message>
+        <source>Cortisol</source>
+        <translation>Cortisol</translation>
+    </message>
+    <message>
+        <source>Morning 150-550 (diurnal)</source>
+        <translation>Ochtend 150-550 (dagritme)</translation>
+    </message>
+    <message>
+        <source>TSH</source>
+        <translation>TSH</translation>
+    </message>
+    <message>
+        <source>0.4-4.0</source>
+        <translation>0.4-4.0</translation>
+    </message>
+    <message>
+        <source>Free T4</source>
+        <translation>Vrij T4</translation>
+    </message>
+    <message>
+        <source>8-22</source>
+        <translation>8-22</translation>
+    </message>
+    <message>
+        <source>Free T3</source>
+        <translation>Vrij T3</translation>
+    </message>
+    <message>
+        <source>3.5-6.5</source>
+        <translation>3.5-6.5</translation>
+    </message>
+    <message>
+        <source>ALT (ALAT)</source>
+        <translation>ALT (ALAT)</translation>
+    </message>
+    <message>
+        <source>M under 40 · F under 30</source>
+        <translation>M onder 40 · V onder 30</translation>
+    </message>
+    <message>
+        <source>AST (ASAT)</source>
+        <translation>AST (ASAT)</translation>
+    </message>
+    <message>
+        <source>M under 35 · F under 30</source>
+        <translation>M onder 35 · V onder 30</translation>
+    </message>
+    <message>
+        <source>GGT (gamma-GT)</source>
+        <translation>GGT (gamma-GT)</translation>
+    </message>
+    <message>
+        <source>M under 55 · F under 40</source>
+        <translation>M onder 55 · V onder 40</translation>
+    </message>
+    <message>
+        <source>ALP (alkaline phosphatase)</source>
+        <translation>ALP (alkalische fosfatase)</translation>
+    </message>
+    <message>
+        <source>40-120</source>
+        <translation>40-120</translation>
+    </message>
+    <message>
+        <source>Bilirubin (total)</source>
+        <translation>Bilirubine (totaal)</translation>
+    </message>
+    <message>
+        <source>under 17</source>
+        <translation>onder 17</translation>
+    </message>
+    <message>
+        <source>Albumin</source>
+        <translation>Albumine</translation>
+    </message>
+    <message>
+        <source>35-50</source>
+        <translation>35-50</translation>
+    </message>
+    <message>
+        <source>Creatinine</source>
+        <translation>Kreatinine</translation>
+    </message>
+    <message>
+        <source>M 65-115 · F 50-95</source>
+        <translation>M 65-115 · V 50-95</translation>
+    </message>
+    <message>
+        <source>eGFR</source>
+        <translation>eGFR</translation>
+    </message>
+    <message>
+        <source>above 90</source>
+        <translation>boven 90</translation>
+    </message>
+    <message>
+        <source>Hemoglobin</source>
+        <translation>Hemoglobine</translation>
+    </message>
+    <message>
+        <source>M 8.5-10.5 · F 7.5-10.0</source>
+        <translation>M 8.5-10.5 · V 7.5-10.0</translation>
+    </message>
+    <message>
+        <source>Hematocrit</source>
+        <translation>Hematocriet</translation>
+    </message>
+    <message>
+        <source>M 0.40-0.50 · F 0.35-0.45</source>
+        <translation>M 0.40-0.50 · V 0.35-0.45</translation>
+    </message>
+    <message>
+        <source>Ferritin</source>
+        <translation>Ferritine</translation>
+    </message>
+    <message>
+        <source>M 30-300 · F 15-200</source>
+        <translation>M 30-300 · V 15-200</translation>
+    </message>
+    <message>
+        <source>LDL cholesterol</source>
+        <translation>LDL-cholesterol</translation>
+    </message>
+    <message>
+        <source>under 3.0</source>
+        <translation>onder 3.0</translation>
+    </message>
+    <message>
+        <source>HDL cholesterol</source>
+        <translation>HDL-cholesterol</translation>
+    </message>
+    <message>
+        <source>M above 1.0 · F above 1.2</source>
+        <translation>M boven 1.0 · V boven 1.2</translation>
+    </message>
+    <message>
+        <source>Triglycerides</source>
+        <translation>Triglyceriden</translation>
+    </message>
+    <message>
+        <source>under 2.0</source>
+        <translation>onder 2.0</translation>
+    </message>
+    <message>
+        <source>Glucose (fasting)</source>
+        <translation>Glucose (nuchter)</translation>
+    </message>
+    <message>
+        <source>4.0-6.0</source>
+        <translation>4.0-6.0</translation>
+    </message>
+    <message>
+        <source>HbA1c</source>
+        <translation>HbA1c</translation>
+    </message>
+    <message>
+        <source>20-42</source>
+        <translation>20-42</translation>
+    </message>
+    <message>
+        <source>Sodium</source>
+        <translation>Natrium</translation>
+    </message>
+    <message>
+        <source>135-145</source>
+        <translation>135-145</translation>
+    </message>
+    <message>
+        <source>Potassium</source>
+        <translation>Kalium</translation>
+    </message>
+    <message>
+        <source>3.5-5.0</source>
+        <translation>3.5-5.0</translation>
+    </message>
+    <message>
+        <source>Calcium (total)</source>
+        <translation>Calcium (totaal)</translation>
+    </message>
+    <message>
+        <source>2.20-2.60</source>
+        <translation>2.20-2.60</translation>
+    </message>
+    <message>
+        <source>Vitamin D (25-OH)</source>
+        <translation>Vitamine D (25-OH)</translation>
+    </message>
+    <message>
+        <source>50-150</source>
+        <translation>50-150</translation>
+    </message>
+    <message>
+        <source>Vitamin B12</source>
+        <translation>Vitamine B12</translation>
+    </message>
+    <message>
+        <source>150-600</source>
+        <translation>150-600</translation>
     </message>
 </context>
 <context>
@@ -41,6 +386,112 @@
     <message>
         <source>skipped</source>
         <translation>overgeslagen</translation>
+    </message>
+</context>
+<context>
+    <name>LabEditPage</name>
+    <message>
+        <source>Custom</source>
+        <translation>Aangepast</translation>
+    </message>
+    <message>
+        <source>Reference: %1</source>
+        <translation type="vanished">Referentie: %1</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Opslaan</translation>
+    </message>
+    <message>
+        <source>Edit result</source>
+        <translation>Resultaat bewerken</translation>
+    </message>
+    <message>
+        <source>New result</source>
+        <translation>Nieuw resultaat</translation>
+    </message>
+    <message>
+        <source>Analyte</source>
+        <translation>Analyte</translation>
+    </message>
+    <message>
+        <source>Custom analyte</source>
+        <translation>Aangepaste analyte</translation>
+    </message>
+    <message>
+        <source>Any test you had done</source>
+        <translation>Elke test die je hebt gedaan</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>Waarde</translation>
+    </message>
+    <message>
+        <source>Unit</source>
+        <translation>Eenheid</translation>
+    </message>
+    <message>
+        <source>Draw date</source>
+        <translation>Afnamedatum</translation>
+    </message>
+    <message>
+        <source>Lab</source>
+        <translation>Laboratorium</translation>
+    </message>
+    <message>
+        <source>Optional</source>
+        <translation type="vanished">Optioneel</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>Notities</translation>
+    </message>
+    <message>
+        <source>Reference (%1): %2</source>
+        <translation>Referentie (%1): %2</translation>
+    </message>
+    <message>
+        <source>Ranges vary by lab and are shown for reference only.</source>
+        <translation>Reeksen verschillen per lab en zijn alleen ter referentie.</translation>
+    </message>
+    <message>
+        <source>Hospital, clinic or lab</source>
+        <translation>Ziekenhuis, kliniek of lab</translation>
+    </message>
+    <message>
+        <source>Anything you want to remember</source>
+        <translation>Alles wat je wilt onthouden</translation>
+    </message>
+</context>
+<context>
+    <name>LabsPage</name>
+    <message>
+        <source>Labs</source>
+        <translation>Labwaarden</translation>
+    </message>
+    <message>
+        <source>Add result</source>
+        <translation>Resultaat toevoegen</translation>
+    </message>
+    <message>
+        <source>No results yet</source>
+        <translation>Nog geen resultaten</translation>
+    </message>
+    <message>
+        <source>Pull down to add a blood test result</source>
+        <translation>Trek omlaag om een bloedresultaat toe te voegen</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="vanished">Bewerken</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="vanished">Verwijderen</translation>
+    </message>
+    <message>
+        <source>Deleting</source>
+        <translation type="vanished">Verwijderen</translation>
     </message>
 </context>
 <context>
@@ -501,6 +952,10 @@
         <source>This replaces everything currently in Dollfin with the contents of the backup file.</source>
         <translation>Dit vervangt alles wat nu in Dollfin staat door de inhoud van het back-upbestand.</translation>
     </message>
+    <message>
+        <source>Dollfin %1</source>
+        <translation>Dollfin %1</translation>
+    </message>
 </context>
 <context>
     <name>StockPage</name>
@@ -581,7 +1036,7 @@
     </message>
     <message>
         <source>No medications yet</source>
-        <translation>Nog geen medicatie</translation>
+        <translation type="vanished">Nog geen medicatie</translation>
     </message>
     <message>
         <source>Medications</source>
@@ -614,6 +1069,10 @@
     <message>
         <source>Undo</source>
         <translation>Ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Labs</source>
+        <translation>Labwaarden</translation>
     </message>
 </context>
 </TS>

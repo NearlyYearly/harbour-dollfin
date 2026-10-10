@@ -444,6 +444,51 @@ bool Store::addLevel(Level &level, QString *error)
     return true;
 }
 
+bool Store::updateLevel(const Level &level, QString *error)
+{
+    QSqlQuery query(m_database.handle());
+    query.prepare(QStringLiteral("UPDATE level SET taken_at=?, analyte=?, value=?, unit=?,"
+                                 " lab=?, notes=? WHERE id=?"));
+    query.addBindValue(toEpoch(level.takenAt));
+    query.addBindValue(level.analyte);
+    query.addBindValue(level.value);
+    query.addBindValue(textOrNull(level.unit));
+    query.addBindValue(textOrNull(level.lab));
+    query.addBindValue(textOrNull(level.notes));
+    query.addBindValue(level.id);
+    return exec(query, error);
+}
+
+bool Store::removeLevel(qint64 id, QString *error)
+{
+    QSqlQuery query(m_database.handle());
+    query.prepare(QStringLiteral("DELETE FROM level WHERE id=?"));
+    query.addBindValue(id);
+    return exec(query, error);
+}
+
+Level Store::level(qint64 id, bool *ok) const
+{
+    Level level;
+    QSqlQuery query(m_database.handle());
+    query.prepare(QStringLiteral("SELECT id, taken_at, analyte, value, unit, lab, notes"
+                                 " FROM level WHERE id=?"));
+    query.addBindValue(id);
+    const bool found = query.exec() && query.next();
+    if (found) {
+        level.id = query.value(0).toLongLong();
+        level.takenAt = fromEpoch(query.value(1).toLongLong());
+        level.analyte = query.value(2).toString();
+        level.value = query.value(3).toDouble();
+        level.unit = query.value(4).toString();
+        level.lab = query.value(5).toString();
+        level.notes = query.value(6).toString();
+    }
+    if (ok)
+        *ok = found;
+    return level;
+}
+
 QList<Level> Store::levels() const
 {
     QList<Level> result;

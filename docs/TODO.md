@@ -9,6 +9,7 @@ New tasks go in the phase they belong to.
 - [x] P2 — data layer (schema, models, schedule engine, tests)
 - [ ] P3 — core UI (medications/regimens, Today, history, cover)
 - [ ] Fold the confirmed reminder design into P4 (see below)
+- [ ] P10 — Labs (blood results, v1.2; D-024/D-025/D-026) — implemented, needs a device test
 
 ## P0 — Research & decisions
 
@@ -134,9 +135,42 @@ See [`PUBLISH.md`](PUBLISH.md) for the full runbook and the store description te
 - [ ] Run the Harbour RPM validator; fix what fails
 - [ ] Decide whether to submit to the Jolla Store
 
+## P10 — Labs (blood results, v1.2)
+
+Data reuses `level`, no migration (D-024). UIs are **Labs** list + add/edit/delete; graphs are
+next (D-026). Ranges are generic Dutch standards and need sign-off (D-025).
+
+- [x] `AnalyteCatalog` in `src/core/analytes.{h,cpp}`: key, label, canonical unit, reference
+      text for 35 analytes (HRT and hormones first) + the fixed unit list (D-024/D-025)
+- [x] `Store`: add `updateLevel` / `removeLevel` / `level(id)`
+- [x] `AppController`: `labs` property, `lab(id)`, `saveLab(map)`, `removeLab(id)`,
+      `analyteCatalog()`, `labUnits()`
+- [x] `qml/pages/LabsPage.qml`: list newest first, add/edit/delete, empty state
+- [x] `qml/pages/LabEditPage.qml`: analyte dropdown (Custom first), locked canonical unit,
+      value, draw date, lab, notes, reference shown neutrally
+- [x] Labs entry in the Today pull-down
+- [x] Unit tests: level CRUD, catalogue/unit integrity, backup round-trip (358 checks)
+- [x] New strings translatable; `lupdate`/`lrelease` done for `en`/`nl`/`nb`
+- [x] Per-analyte grouping: `Analytes::summarize` + `analyteSummaries` (D-028)
+- [x] Labs page = one row per analyte; `AnalyteResultsPage`; Add locks the analyte
+- [ ] Device test: pick a test, add under it, edit/delete
+- [ ] P7 wording pass on the reference ranges and the “not medical advice” wording
+      (D-012/D-025)
+
+## P11 — Lab graphs
+
+One analyte, one unit at a time (D-026/D-028). No chart dependency: QML `Canvas`.
+
+- [x] `AnalyteGraphPage.qml`: Canvas line + points, dated x-axis, unit label
+- [x] Handle 0 / 1 point; unit switch when an analyte has more than one
+- [x] Reference band only for unambiguous single ranges (D-029)
+- [x] “Illustrative only, not medical advice” label (D-012)
+- [x] Graph entry in the analyte page’s pull-down
+- [ ] Device test: graph with 1 and with several points, band vs no band, unit switch
+
 ## Backlog (post-v1)
 
-- [ ] Hormone graphs for **all** tracked analytes
+- [ ] Hormone graphs for **all** tracked analytes (next v1.x, D-026)
 - [ ] Application-site tracking (gel / patch / injection)
 - [ ] Adherence statistics
 - [ ] App lock (PIN via `Sailfish.Secrets`)

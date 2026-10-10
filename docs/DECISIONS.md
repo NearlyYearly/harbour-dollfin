@@ -284,6 +284,169 @@ Template:
 
 ---
 
+### D-024 — Labs (blood results) tracking, no schema change
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** v1.2 records blood results: hormones first, plus liver, kidney, blood count,
+  lipids and the like. The v1 schema already has `level(id, taken_at, analyte, value, unit,
+  lab, notes)` and `Store::addLevel()/levels()`, but no UI ever wrote to it, so there is no
+  stored data to migrate. Backups already dump `level` generically (D-023).
+- **Decision:** Reuse `level` **without a migration**. The feature is called **Labs** in the UI
+  and opens from the Today pull-down. `level.analyte` holds a stable catalog **key** for a
+  known analyte (`estradiol`) or the user's own text for a **Custom** entry; `taken_at` is the
+  **draw date** (local midnight); `unit` is stored per row. Analyte entry is a **dropdown of
+  common analytes, HRT first, Custom first** (same pattern as D-017/D-022). **Unit is a fixed
+  dropdown, never free text**; a catalog analyte has one canonical unit and the editor locks
+  it, while a Custom analyte may pick any listed unit. Display labels are resolved from the key
+  at render time, so translations and catalogue edits stay safe.
+- **Consequences:** No schema change, no migration, backup round-trips unchanged. `Store`
+  gains `updateLevel`/`removeLevel`/`level(id)` next to the existing `addLevel`/`levels`, all
+  unit-tested. The catalogue lives in C++ (`src/core/analytes.*`) so it is testable; QML only
+  renders it. A result entered in one language still shows the right name after a language
+  change.
+
+---
+
+### D-025 — Generic reference ranges (Dutch standards)
+- **Date:** 2026-10-10 · **Status:** Accepted (ranges get the P7 wording pass)
+- **Context:** The user wants a general best-practice reference range per analyte, not a
+  user-entered range. Ranges are lab- and assay-specific, and some (testosterone, haemoglobin)
+  are sex-specific; the app must not assume a gender (golden rule 3, D-012). A *target* range
+  for HRT hormones would read as dosing advice.
+- **Decision:** Ship a **built-in general adult reference range per catalogue analyte**,
+  aligned with **Dutch (NVKC/ECLM-style) units and values** (Hb in mmol/L, glucose and lipids
+  in mmol/L, HbA1c in mmol/mol). Custom analytes show **no** range. A sex-specific range is
+  shown as a neutral `M … · F …` string and never as one assumed range. A context-dependent
+  value (estradiol, LH/FSH cycle phase, cortisol time of day) is shown as descriptive text and
+  is **not** flagged. The UI states the range factually (`Reference: …`) and adds a neutral
+  *below / within / above the general reference* caption in the platform's secondary colour —
+  never `Theme.errorColor`, never advice. Ranges are not stored per result; they are looked up
+  from the catalogue so a correction applies everywhere.
+- **Range table (Dutch general adult values; P7 reads them for tone):**
+
+  | Analyte (key) | Unit | General adult reference |
+  |---------------|------|-------------------------|
+  | Estradiol (E2) (`estradiol`) | pmol/L | context-dependent (cycle / menopause / HRT) |
+  | Estrone (E1) (`estrone`) | pmol/L | context-dependent |
+  | Testosterone, total (`testosterone`) | nmol/L | M 8-30 · F 0.5-2.5 |
+  | Testosterone, free (`free_testosterone`) | pmol/L | M 170-500 · F < 30 |
+  | Prolactin (`prolactin`) | µg/L | M < 15 · F < 25 |
+  | LH (`lh`) | U/L | context-dependent (cycle); M 1.5-9 |
+  | FSH (`fsh`) | U/L | context-dependent (cycle); M 1.5-12 |
+  | SHBG (`shbg`) | nmol/L | M 20-70 · F 40-120 |
+  | Progesterone (`progesterone`) | nmol/L | M < 1 · F follicular < 3, luteal 15-80 |
+  | DHEA-S (`dhea_s`) | µmol/L | age-dependent; roughly 2-10 |
+  | Cortisol (`cortisol`) | nmol/L | morning 150-550 (diurnal) |
+  | TSH (`tsh`) | mU/L | 0.4-4.0 |
+  | Free T4 (`ft4`) | pmol/L | 8-22 |
+  | Free T3 (`ft3`) | pmol/L | 3.5-6.5 |
+  | ALT / ALAT (`alt`) | U/L | M < 40 · F < 30 |
+  | AST / ASAT (`ast`) | U/L | M < 35 · F < 30 |
+  | GGT / gamma-GT (`ggt`) | U/L | M < 55 · F < 40 |
+  | ALP / alkaline phosphatase (`alp`) | U/L | 40-120 |
+  | Bilirubin, total (`bilirubin`) | µmol/L | < 17 |
+  | Albumin (`albumin`) | g/L | 35-50 |
+  | Creatinine (`creatinine`) | µmol/L | M 65-115 · F 50-95 |
+  | eGFR (`egfr`) | mL/min/1.73 m² | > 90 |
+  | Haemoglobin (`hemoglobin`) | mmol/L | M 8.5-10.5 · F 7.5-10.0 |
+  | Haematocrit (`hematocrit`) | L/L | M 0.40-0.50 · F 0.35-0.45 |
+  | Ferritin (`ferritin`) | µg/L | M 30-300 · F 15-200 |
+  | LDL cholesterol (`ldl`) | mmol/L | < 3.0 |
+  | HDL cholesterol (`hdl`) | mmol/L | M > 1.0 · F > 1.2 |
+  | Triglycerides (`triglycerides`) | mmol/L | < 2.0 |
+  | Glucose, fasting (`glucose`) | mmol/L | 4.0-6.0 |
+  | HbA1c (`hba1c`) | mmol/mol | 20-42 |
+  | Sodium (`sodium`) | mmol/L | 135-145 |
+  | Potassium (`potassium`) | mmol/L | 3.5-5.0 |
+  | Calcium, total (`calcium`) | mmol/L | 2.20-2.60 |
+  | Vitamin D, 25-OH (`vitamin_d`) | nmol/L | 50-150 |
+  | Vitamin B12 (`vitamin_b12`) | pmol/L | 150-600 |
+
+  **Unit drop-down (fixed, no free text):** pmol/L, nmol/L, µmol/L, mmol/L, mmol/mol, U/L,
+  mU/L, µg/L, ng/mL, pg/mL, mg/dL, ng/dL, µg/dL, g/L, g/dL, mg/L, mL/min/1.73 m², mL/min, %,
+  L/L, 10⁹/L, 10¹²/L, fL, pg, mEq/L, IU/L, U/mL, ratio.
+
+- **Consequences:** One central table to review and correct; adding a range is a data edit,
+  not a migration. The values are accepted for v1.2 as general Dutch adult ranges; the P7
+  wording pass still reads them for tone. Estradiol and similar HRT values deliberately carry
+  **no target band** (D-012).
+
+---
+
+### D-026 — Lab graphs (deferred, recording kept graph-ready)
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Long-term we want to graph results (D-015), but v1.2 is recording and browsing.
+- **Decision:** Defer the graph UI to a later v1.x phase and add **no chart dependency now**.
+  Recording is shaped so a graph needs no rework: group by (catalogue key or custom text, unit)
+  and plot `value` over `taken_at`, with a band drawn from D-025. The graph, when built, carries
+  the D-012 “illustrative, not medical advice” label.
+- **Consequences:** v1.2 ships list + add/edit/delete only; the graph is a pure UI addition on
+  top of the same `level` rows.
+
+---
+
+### D-027 — Lab units are selectable; references always visible
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Device testing of P10 found the unit was locked to the catalogue's canonical
+  unit, so a result the lab reports differently could not be entered. The two optional fields
+  (lab, notes) looked identical, and the reference was not obvious.
+- **Decision:** The unit drop-down is **always selectable**, defaulting to the analyte's usual
+  unit. The reference appears as soon as an analyte is picked, labelled with the unit it
+  applies to (`Reference (nmol/L): …`), together with a short “ranges vary by lab” disclaimer.
+  Lab and Notes get distinct hints.
+- **Consequences:** Refines D-024 (which locked the unit). The stored unit is whatever the
+  user chose, so graphs still group by unit (D-026), and a reference shown for a unit other
+  than the one picked is clearly labelled.
+
+---
+
+### D-028 — Labs are grouped per analyte (derived, no tracked-analyte table)
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** A flat "all results" list made it unclear which result belonged to which test.
+  The cleaner flow is: pick the test you track, see its results, log under it. An explicit
+  `tracked_analyte` table (pre-adding empty tests) was considered.
+- **Decision:** The Labs page is **grouped per analyte, derived from the `level` rows**
+  (`Analytes::summarize`, one row per analyte, newest value/date wins, count kept). **No new
+  table and no migration.** Tapping an analyte opens its results; Add there pre-sets and locks
+  the analyte so a result cannot land under the wrong test. An analyte appears on its first
+  result.
+- **Consequences:** No "I plan to track X but have no values yet" entries — acceptable. The
+  grouping lives in core and is unit-tested. The graph (D-026) reuses the same grouping, one
+  unit at a time.
+
+---
+
+### D-029 — Lab graph: QML Canvas, one unit, bands only for clear ranges
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** P11 adds a graph. Qt 5.6/Silica has no chart component and QtCharts is not in
+  the allowed API set.
+- **Decision:** Draw with a plain QML **`Canvas`** (line + points + axis), **no chart
+  dependency**. One analyte, **one unit at a time**, with a unit switch when an analyte has
+  more than one. A shaded band is drawn only where the catalogue range is a single two-sided
+  numeric value in the catalogue unit (`kBands`, `AnalyteRef::hasBand`); sex-specific,
+  one-sided and context-dependent ranges get no band, only the caption. The page carries the
+  **“Illustrative only, not medical advice.”** line (D-012).
+- **Consequences:** `kBands` duplicates part of the range text in `kAnalytes`; they must stay
+  in sync (covered by a unit test that spot-checks TSH/ALP and rejects the sex-specific
+  testosterone). No new library, so Harbour stays viable.
+
+---
+
+### D-030 — No unit conversion; the graph shows one unit at a time
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Labs can hold the same analyte in different units (D-027). Molar↔mass
+  conversion is well-defined for a molecule (estradiol pmol/L↔pg/mL, testosterone
+  nmol/L↔ng/dL, glucose mmol/L↔mg/dL), but enzyme activity (U/L) and some assays are
+  lab/standard-specific, and a wrong factor is silently wrong health data.
+- **Decision:** **Do not convert.** The graph plots **one unit at a time** and offers a unit
+  switch when an analyte has more than one, with a note that results are not converted. The
+  reference band still applies only to the catalogue unit (D-029). Unit stays stored as
+  entered (D-024).
+- **Consequences:** No conversion table to maintain or get wrong; mixed-unit results are shown
+  side by side instead of merged, which is honest but means the user compares series
+  themselves. Adding conversion later needs its own decision and a verified factor table.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

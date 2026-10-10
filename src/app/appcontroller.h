@@ -23,6 +23,8 @@ class AppController : public QObject
     Q_PROPERTY(QVariantList regimens READ regimens NOTIFY changed)
     Q_PROPERTY(QVariantList todayDoses READ todayDoses NOTIFY changed)
     Q_PROPERTY(QVariantList history READ history NOTIFY changed)
+    Q_PROPERTY(QVariantList labs READ labs NOTIFY changed)
+    Q_PROPERTY(QVariantList analyteSummaries READ analyteSummaries NOTIFY changed)
     Q_PROPERTY(QString todayLabel READ todayLabel NOTIFY changed)
     Q_PROPERTY(bool remindersEnabled READ remindersEnabled NOTIFY settingsChanged)
     Q_PROPERTY(bool remindersConsent READ remindersConsent NOTIFY settingsChanged)
@@ -36,6 +38,8 @@ public:
     QVariantList regimens() const;
     QVariantList todayDoses() const;
     QVariantList history() const;
+    QVariantList labs() const;
+    QVariantList analyteSummaries() const;
     QString todayLabel() const;
 
     bool remindersEnabled() const;
@@ -62,6 +66,13 @@ public:
     Q_INVOKABLE bool syncCalendarReminders();
     Q_INVOKABLE QString exportIcs();
     Q_INVOKABLE bool openInCalendar(const QString &path);
+
+    // Labs / blood results (P10, D-024).
+    Q_INVOKABLE QVariantMap lab(int id) const;
+    Q_INVOKABLE bool saveLab(const QVariantMap &data);
+    Q_INVOKABLE bool removeLab(int id);
+    Q_INVOKABLE QVariantList analyteCatalog() const;
+    Q_INVOKABLE QVariantList labUnits() const;
 
     // Stock (P5).
     Q_INVOKABLE bool saveStock(int medicationId, double quantity, const QString &unit,

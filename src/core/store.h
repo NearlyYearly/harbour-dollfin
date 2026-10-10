@@ -42,8 +42,11 @@ public:
     bool setStock(const Stock &stock, QString *error = nullptr);
     Stock stock(qint64 medicationId, bool *ok = nullptr) const;
 
-    // Levels -----------------------------------------------------------------
+    // Levels (Labs, D-024) ---------------------------------------------------
     bool addLevel(Level &level, QString *error = nullptr);
+    bool updateLevel(const Level &level, QString *error = nullptr);
+    bool removeLevel(qint64 id, QString *error = nullptr);
+    Level level(qint64 id, bool *ok = nullptr) const;
     QList<Level> levels() const;
 
 private:

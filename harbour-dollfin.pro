@@ -42,6 +42,10 @@ DISTFILES += \
     qml/pages/RegimensPage.qml \
     qml/pages/RegimenEditPage.qml \
     qml/pages/HistoryPage.qml \
+    qml/pages/LabsPage.qml \
+    qml/pages/AnalyteResultsPage.qml \
+    qml/pages/AnalyteGraphPage.qml \
+    qml/pages/LabEditPage.qml \
     qml/pages/SettingsPage.qml \
     rpm/$${TARGET}.spec \
     translations/*.ts \
