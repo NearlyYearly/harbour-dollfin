@@ -103,6 +103,8 @@ Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the a
 - [ ] Performance: page load, smooth animations, memory (test with `smem`)
 - [ ] Accessibility: contrast, tap targets, screen-reader labels
 - [ ] Wording review for neutrality and safety
+- [ ] Remove or gate the development message log (`dollfin.log`) before release — it writes
+      Qt/QML messages to disk and isn't appropriate for a privacy app in production
 - [ ] Icon and store screenshots
 
 ## P8 — Publish (Storeman)
