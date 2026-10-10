@@ -64,7 +64,8 @@ managing HRT, but it works for anyone who needs simple, reliable medication trac
 Everything stays on your phone. No account, no network access, no telemetry.
 
 What it does:
-- Track any medication. Names are free text, so compounded or uncommon preparations work too.
+- Track any medication. Pick from a list of common HRT meds or type your own, so compounded or
+  uncommon preparations work too.
 - Schedules: every day, every N days, or weekly on chosen weekdays, with multiple times a day.
 - A Today screen to tick off doses, and a cover that shows today's doses at a glance.
 - History of everything you have logged.

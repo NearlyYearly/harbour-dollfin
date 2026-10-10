@@ -15,8 +15,8 @@ Status: **v1.0** (Sailfish OS 5.x, aarch64).
   treated as critical code.
 - **Simple.** Smallest version that does the core job. No accounts, no sync, no telemetry,
   no dosing advice.
-- **Yours, whatever you take.** Medication names are free text — no fixed drug list, so
-  compounded or unusual preparations work too.
+- **Yours, whatever you take.** Pick from a list of common HRT medications, or choose Custom
+  and type any name, so compounded or unusual preparations work too.
 - **Open.** Free and open source, no subscriptions or premium tiers.
 
 ## Target

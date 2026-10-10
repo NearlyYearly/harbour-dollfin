@@ -55,7 +55,7 @@ New tasks go in the phase they belong to.
 ## P3 — Core UI
 
 - [x] Medications list page + empty state
-- [x] Add/edit medication page (free-text name; optional quick-pick deferred, D-017)
+- [x] Add/edit medication page: dropdown of common HRT meds plus Custom free text (D-017/D-022)
 - [x] Add/edit regimen page (dose, route, times, interval, weekly days, dates)
 - [x] Today page: today's doses with taken/skipped actions
 - [x] History page: list of logged intakes with delete

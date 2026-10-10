@@ -53,8 +53,8 @@ diagnosis, pregnancy tracking.
 
 ### How dollfin differs from mona
 
-- **Custom medications (D-017).** Any medication can be entered as free text; mona restricts
-  you to a predefined list.
+- **Custom medications (D-017/D-022).** A list of common HRT medications plus a Custom option
+  for anything else; mona only allows its predefined list.
 - Reminders ride on the OS **local calendar / `timed`** rather than a background service.
 - Fully offline by design: no `Internet` permission at all.
 
