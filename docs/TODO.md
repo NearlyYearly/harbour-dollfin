@@ -6,7 +6,8 @@ New tasks go in the phase they belong to.
 ## Now
 
 - [x] Reminder spike — done, `spikes/reminders/` (D-019)
-- [ ] P2 — data layer (schema, models, schedule engine, tests)
+- [x] P2 — data layer (schema, models, schedule engine, tests)
+- [ ] P3 — core UI (medications/regimens, Today, history, cover)
 - [ ] Fold the confirmed reminder design into P4 (see below)
 
 ## P0 — Research & decisions
@@ -41,15 +42,15 @@ New tasks go in the phase they belong to.
 
 ## P2 — Data layer
 
-- [ ] Create the SQLite schema (medication, regimen, intake, stock, level, schema_version)
-- [ ] Medication name is **free text** with optional form/strength/unit fields (D-017)
-- [ ] Implement connection + `schema_version` migration runner
-- [ ] Medication model (CRUD)
-- [ ] Regimen model with schedule expansion (times + interval)
-- [ ] Intake model (log / edit / delete), generic `site` column for later
-- [ ] Schedule engine: given a date range, produce scheduled doses
-- [ ] Unit tests for schema, migration and schedule expansion
-- [ ] Unit tests for edge cases: DST, month/year boundaries, paused regimens
+- [x] Create the SQLite schema (medication, regimen, intake, stock, level, schema_version)
+- [x] Medication name is **free text** with optional form/strength/unit fields (D-017)
+- [x] Implement connection + `schema_version` migration runner
+- [x] Medication model (CRUD)
+- [x] Regimen model with schedule expansion (times + interval)
+- [x] Intake model (log / edit / delete), generic `site` column for later
+- [x] Schedule engine: given a date range, produce scheduled doses
+- [x] Unit tests for schema, migration and schedule expansion (`scripts/run-tests.sh`)
+- [x] Unit tests for edge cases: DST, month/year boundaries, paused regimens
 
 ## P3 — Core UI
 

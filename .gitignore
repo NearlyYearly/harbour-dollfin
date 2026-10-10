@@ -21,3 +21,9 @@ RPMS/
 
 # Local scratch
 /tmp/
+
+# SDK build tree + test binaries
+.mb2/
+RPMS/
+tests/tst_core/tst_core
+*.qm

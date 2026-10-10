@@ -15,6 +15,8 @@ CONFIG += sailfishapp
 
 SOURCES += src/harbour-dollfin.cpp
 
+include(src/core/core.pri)
+
 DISTFILES += \
     qml/harbour-dollfin.qml \
     qml/cover/CoverPage.qml \

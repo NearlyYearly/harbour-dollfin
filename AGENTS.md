@@ -31,7 +31,9 @@ unless a decision in `docs/DECISIONS.md` says otherwise.
 
 - [ ] Builds with `sfdk build` for the aarch64 target
 - [ ] Deploys and runs on a device or emulator via `sfdk deploy`
-- [ ] New logic has a QtTest unit test (data layer, schedule and reminder logic especially)
+- [ ] New logic has a unit test in `tests/` (data layer and schedule logic especially);
+      run them with `scripts/run-tests.sh`. QtTest is not packaged in the target, so tests use
+      a small in-tree `CHECK`/`CHECK_EQ` harness — see `tests/tst_core/tst_core.cpp`.
 - [ ] Strings wrapped for translation
 - [ ] No new permission, library or dependency without a `docs/DECISIONS.md` entry
 - [ ] `docs/TODO.md` and/or `docs/DECISIONS.md` updated if scope changed
@@ -59,6 +61,7 @@ Day-to-day builds need **no SDK** — just podman:
 
 ```sh
 scripts/build-rpm.sh            # -> RPMS/harbour-dollfin-<ver>-1.aarch64.rpm
+scripts/run-tests.sh            # build + run unit tests in the SDK container
 scripts/deploy-device.sh        # scp + devel-su install to the phone (USB default)
 ```
 
