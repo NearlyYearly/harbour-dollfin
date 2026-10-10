@@ -23,16 +23,20 @@ New tasks go in the phase they belong to.
 
 ## P1 — Skeleton
 
-- [ ] Install the Sailfish SDK (Fedora/Bazzite host)
-- [ ] List targets (`sfdk target list`); install the newest aarch64 SailfishOS 5.x target
-- [ ] Create the project from the Sailfish OS Qt Quick application template
-- [ ] Rename to `harbour-dollfin` (project, desktop, icons, RPM spec)
-- [ ] Desktop file: `Name=Dollfin`, `OrganizationName=org.dollfin`, `ApplicationName=Dollfin`,
-      empty `[X-Sailjail]` section
-- [ ] Build and deploy the empty app to the Jolla Phone 2026
+- [x] `git init` + initial commit
+- [x] Scaffold from the official `sfdk init` template
+- [x] Rename to `harbour-dollfin` (project, desktop, icon, RPM spec)
+- [x] Desktop file: `Name=Dollfin`, `OrganizationName=org.dollfin`, `ApplicationName=Dollfin`,
+      no permissions declared yet
+- [x] `.gitignore` for build artefacts (`RPMS/`, `*.o`, `Makefile`, …)
+- [x] `lupdate`/`lrelease` wiring + `en`/`nl`/`nb` translation scaffolds (D-014)
+- [x] `LICENSE` (GPL-3.0-or-later)
+- [ ] Install the Sailfish SDK (see `docs/BUILD.md`)
+- [ ] Install the newest aarch64 SailfishOS 5.x build target
+- [ ] `sfdk build` the empty app
+- [ ] Reconcile the scaffold with a real `sfdk init --type qtquick2-app` run; fix any drift
+- [ ] Deploy to the Jolla Phone 2026
 - [ ] Verify it launches from the app grid and the cover renders
-- [ ] Set up `lupdate`/`lrelease` with `en`/`nl`/`nb` scaffolding (D-014)
-- [ ] Add `.gitignore` for build artefacts (`RPMS/`, `*.o`, `Makefile`, …)
 - [ ] Note the Keel porting guide so new code stays Keel-grade (D-002)
 
 ## P2 — Data layer

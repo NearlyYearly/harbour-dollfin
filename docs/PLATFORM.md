@@ -41,7 +41,11 @@ Facts and links behind the decisions in `DECISIONS.md`. Update when the platform
 - `sfdk build` produces the RPM; `sfdk build --sign` GPG-signs it; `sfdk deploy` pushes to
   device/emulator.
 - Build targets are `SailfishOS-<version>-<arch>`. Confirm what your SDK currently offers
-  with `sfdk target list`; SDK targets can lag the newest OS release.
+  with `sfdk target list`; SDK targets can lag the newest OS release. As of SDK 3.13.5
+  (latest), the bundled targets are Sailfish OS **5.1.0.11**; newer OS versions arrive as
+  **Early Access** targets via the SDKMaintenanceTool.
+- Step-by-step setup for this machine (Bazzite, no Docker/VirtualBox) is in
+  [`BUILD.md`](BUILD.md).
 - Sources: [docs/Tools](https://docs.sailfishos.org/Tools/),
   [docs/Apps/Packaging](https://docs.sailfishos.org/Develop/Apps/Packaging/).
 

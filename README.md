@@ -31,6 +31,7 @@ Status: **planning / pre-alpha** (no app code yet).
 ## Documentation
 
 - [`AGENTS.md`](AGENTS.md) — working instructions, conventions, definition of done
+- [`docs/BUILD.md`](docs/BUILD.md) — install the SDK and build/deploy
 - [`docs/PLATFORM.md`](docs/PLATFORM.md) — researched Sailfish OS facts and sources
 - [`docs/PLAN.md`](docs/PLAN.md) — product scope, architecture, phases, risks
 - [`docs/TODO.md`](docs/TODO.md) — ordered task list

@@ -54,8 +54,7 @@ docs/                        # plan, todo, decisions, platform notes
 
 ## Build & run
 
-The Sailfish SDK (Qt Creator-based IDE + `sfdk` CLI) is required. Host is Fedora/Bazzite;
-install the SDK with the official installer.
+One-time SDK setup is in [`docs/BUILD.md`](docs/BUILD.md). Day-to-day:
 
 ```sh
 sfdk tools list                 # installed toolchains/targets
