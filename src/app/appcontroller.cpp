@@ -3,13 +3,19 @@
 
 #include "appcontroller.h"
 
+#include "core/ical.h"
 #include "core/scheduleengine.h"
 
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusMessage>
 #include <QDate>
 #include <QDateTime>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QStringList>
 #include <QTime>
 #include <algorithm>
 
@@ -266,8 +272,11 @@ bool AppController::saveRegimen(const QVariantMap &data)
         return false;
 
     const bool ok = r.id >= 0 ? m_store.updateRegimen(r) : m_store.addRegimen(r);
-    if (ok)
+    if (ok) {
         emit changed();
+        if (remindersEnabled() && remindersConsent())
+            syncCalendarReminders();
+    }
     return ok;
 }
 
@@ -327,6 +336,80 @@ bool AppController::removeIntake(int intakeId)
     if (ok)
         emit changed();
     return ok;
+}
+
+// --- Reminders -------------------------------------------------------------
+
+bool AppController::remindersEnabled() const
+{
+    return m_settings.value(QStringLiteral("reminders/enabled"), false).toBool();
+}
+
+bool AppController::remindersConsent() const
+{
+    return m_settings.value(QStringLiteral("reminders/consent"), false).toBool();
+}
+
+void AppController::setRemindersEnabled(bool enabled)
+{
+    m_settings.setValue(QStringLiteral("reminders/enabled"), enabled);
+    emit settingsChanged();
+}
+
+void AppController::setRemindersConsent(bool consented)
+{
+    m_settings.setValue(QStringLiteral("reminders/consent"), consented);
+    emit settingsChanged();
+}
+
+QString AppController::remindersIcs() const
+{
+    QStringList events;
+    const QList<Regimen> items = m_store.regimens(-1, true);
+    for (const Regimen &regimen : items) {
+        const Medication medication = m_store.medication(regimen.medicationId);
+        for (const QTime &time : regimen.times)
+            events.append(ICal::event(regimen, medication.name, time));
+    }
+    if (events.isEmpty())
+        return QString();
+    return ICal::wrap(events);
+}
+
+bool AppController::syncCalendarReminders()
+{
+    const QString ics = remindersIcs();
+    if (ics.isEmpty())
+        return false;
+
+    QDBusInterface iface(QStringLiteral("com.jolla.calendar.ui"),
+                         QStringLiteral("/com/jolla/calendar/ui"),
+                         QStringLiteral("com.jolla.calendar.ui"),
+                         QDBusConnection::sessionBus());
+    if (!iface.isValid())
+        return false;
+    const QDBusMessage reply = iface.call(QStringLiteral("importIcsData"), ics);
+    return reply.type() != QDBusMessage::ErrorMessage;
+}
+
+QString AppController::exportIcs()
+{
+    const QString ics = remindersIcs();
+    if (ics.isEmpty())
+        return QString();
+
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    if (dir.isEmpty())
+        return QString();
+    QDir().mkpath(dir);
+
+    const QString path = dir + QStringLiteral("/dollfin-reminders.ics");
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        return QString();
+    file.write(ics.toUtf8());
+    file.close();
+    return path;
 }
 
 } // namespace dollfin

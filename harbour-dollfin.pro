@@ -13,6 +13,8 @@ TARGET = harbour-dollfin
 
 CONFIG += sailfishapp
 
+QT += dbus
+
 INCLUDEPATH += $$PWD/src
 
 SOURCES += \
@@ -33,6 +35,7 @@ DISTFILES += \
     qml/pages/RegimensPage.qml \
     qml/pages/RegimenEditPage.qml \
     qml/pages/HistoryPage.qml \
+    qml/pages/SettingsPage.qml \
     rpm/$${TARGET}.spec \
     translations/*.ts \
     $${TARGET}.desktop

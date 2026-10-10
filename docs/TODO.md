@@ -71,15 +71,18 @@ Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the a
 **iCalendar** and hands it to the Calendar UI via `com.jolla.calendar.ui.importIcsData`;
 `.ics` file export is the fallback. Reminders are opt-in (D-020).
 
-- [ ] iCalendar builder: VEVENT + VALARM, `RRULE` for daily / every N days / weekly, stable
+- [x] iCalendar builder: VEVENT + VALARM, `RRULE` for daily / every N days / weekly, stable
       `UID` per regimen, 1-minute duration, alarm at event start (D-021)
-- [ ] Consent screen + persisted setting, warning that the chosen calendar may sync (D-020)
-- [ ] `ReminderService` calling `importIcsData` through `Nemo.DBus`
-- [ ] `.ics` file export (backup / manual import)
-- [ ] Re-import the same `UID` to update; document how to remove events (we cannot delete)
-- [ ] Unit tests for the iCalendar builder
+- [x] Consent screen + persisted setting, warning that the chosen calendar may sync (D-020)
+- [x] Settings page: reminders on/off, "update calendar reminders", `.ics` export
+- [x] Reminder sync calling `com.jolla.calendar.ui.importIcsData` (via `QDBusInterface`)
+- [x] `.ics` file export to `~/Downloads/dollfin-reminders.ics`
+- [x] Unit tests for the iCalendar builder (`tests/tst_core`)
 - [ ] Manual test: alarm fires with the app closed, and after a reboot
-- [ ] Delete the probe page and branch once implemented (the `Calendar` permission stays)
+- [ ] Document that turning reminders off does not remove events already in the calendar
+      (we cannot delete them; the user removes them in the Calendar app)
+- [x] Probe removed from `main` (kept on `spike/reminders`); `Calendar` + `Downloads`
+      permissions added back
 
 ## P5 — Stock
 

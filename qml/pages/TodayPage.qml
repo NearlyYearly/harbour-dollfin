@@ -35,6 +35,10 @@ Page {
                 text: qsTr("History")
                 onClicked: pageStack.push(Qt.resolvedUrl("HistoryPage.qml"))
             }
+            MenuItem {
+                text: qsTr("Settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"))
+            }
         }
 
         ViewPlaceholder {

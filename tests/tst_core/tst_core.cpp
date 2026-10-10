@@ -6,6 +6,7 @@
 //   cd tests/tst_core && qmake && make && ./tst_core
 
 #include "core/database.h"
+#include "core/ical.h"
 #include "core/scheduleengine.h"
 #include "core/store.h"
 
@@ -311,6 +312,50 @@ static void testFirstOccurrenceAfter()
     CHECK(!ScheduleEngine::firstOccurrenceAfter(paused, utc("2026-01-02T09:00")).isValid());
 }
 
+static void testIcalBuilder()
+{
+    Regimen r;
+    r.id = 7;
+    r.active = true;
+    r.intervalDays = 3;
+    r.times = QList<QTime>() << QTime(9, 0);
+    r.startDate = med("2026-01-05"); // a Monday
+
+    const QString everyThree = ICal::event(r, QStringLiteral("Estradiol"), QTime(9, 0));
+    CHECK(everyThree.contains(QStringLiteral("UID:dollfin-7-0900@dollfin")));
+    CHECK(everyThree.contains(QStringLiteral("RRULE:FREQ=DAILY;INTERVAL=3")));
+    CHECK(everyThree.contains(QStringLiteral("DTSTART:20260105T090000")));
+    CHECK(everyThree.contains(QStringLiteral("DURATION:PT1M")));      // D-021
+    CHECK(everyThree.contains(QStringLiteral("TRIGGER:PT0S")));        // at event start
+    CHECK(everyThree.contains(QStringLiteral("SUMMARY:Estradiol")));
+    CHECK(everyThree.contains(QStringLiteral("\r\n")));
+
+    // Weekly: start on a Tuesday, first dosing day must be the Wednesday.
+    Regimen weekly;
+    weekly.id = 8;
+    weekly.active = true;
+    weekly.daysOfWeek = QList<int>() << 1 << 3 << 5; // Mon, Wed, Fri
+    weekly.times = QList<QTime>() << QTime(20, 0);
+    weekly.startDate = med("2026-01-06");
+    const QString weeklyEvent = ICal::event(weekly, QStringLiteral("Gel"), QTime(20, 0));
+    CHECK(weeklyEvent.contains(QStringLiteral("RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR")));
+    CHECK(weeklyEvent.contains(QStringLiteral("DTSTART:20260107T200000")));
+
+    // Daily (interval 1) has no INTERVAL.
+    Regimen daily;
+    daily.id = 9;
+    daily.active = true;
+    daily.intervalDays = 1;
+    daily.times = QList<QTime>() << QTime(8, 0);
+    daily.startDate = med("2026-01-01");
+    CHECK(ICal::event(daily, QStringLiteral("X"), QTime(8, 0))
+              .contains(QStringLiteral("RRULE:FREQ=DAILY\r\n")));
+
+    const QString calendar = ICal::wrap(QStringList() << everyThree << weeklyEvent);
+    CHECK(calendar.startsWith(QStringLiteral("BEGIN:VCALENDAR\r\n")));
+    CHECK(calendar.endsWith(QStringLiteral("END:VCALENDAR\r\n")));
+}
+
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
@@ -328,6 +373,7 @@ int main(int argc, char **argv)
     testScheduleMonthYearBoundary();
     testScheduleDst();
     testFirstOccurrenceAfter();
+    testIcalBuilder();
 
     std::fprintf(stderr, "%d checks, %d failure(s)\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;

@@ -7,6 +7,7 @@
 #include "core/store.h"
 
 #include <QObject>
+#include <QSettings>
 #include <QVariantList>
 #include <QVariantMap>
 
@@ -23,6 +24,8 @@ class AppController : public QObject
     Q_PROPERTY(QVariantList todayDoses READ todayDoses NOTIFY changed)
     Q_PROPERTY(QVariantList history READ history NOTIFY changed)
     Q_PROPERTY(QString todayLabel READ todayLabel NOTIFY changed)
+    Q_PROPERTY(bool remindersEnabled READ remindersEnabled NOTIFY settingsChanged)
+    Q_PROPERTY(bool remindersConsent READ remindersConsent NOTIFY settingsChanged)
 
 public:
     explicit AppController(QObject *parent = nullptr);
@@ -34,6 +37,9 @@ public:
     QVariantList todayDoses() const;
     QVariantList history() const;
     QString todayLabel() const;
+
+    bool remindersEnabled() const;
+    bool remindersConsent() const;
 
     Q_INVOKABLE QVariantMap medication(int id) const;
     Q_INVOKABLE QVariantMap regimen(int id) const;
@@ -49,12 +55,21 @@ public:
     Q_INVOKABLE bool clearIntake(int intakeId);
     Q_INVOKABLE bool removeIntake(int intakeId);
 
+    // Reminders (D-019/D-020).
+    Q_INVOKABLE void setRemindersEnabled(bool enabled);
+    Q_INVOKABLE void setRemindersConsent(bool consented);
+    Q_INVOKABLE QString remindersIcs() const;
+    Q_INVOKABLE bool syncCalendarReminders();
+    Q_INVOKABLE QString exportIcs();
+
 signals:
     void changed();
+    void settingsChanged();
 
 private:
     Database m_database;
     Store m_store;
+    QSettings m_settings;
 };
 
 } // namespace dollfin
