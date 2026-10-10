@@ -28,10 +28,19 @@ Status: **planning / pre-alpha** (no app code yet).
 | Distribution | OpenRepos / Storeman |
 | License | GPL-3.0-or-later |
 
+## Build
+
+```sh
+scripts/build-rpm.sh   # -> RPMS/harbour-dollfin-<version>-1.aarch64.rpm
+```
+
+Uses podman and a Sailfish Platform SDK container; no SDK install required. See
+[`docs/BUILD.md`](docs/BUILD.md).
+
 ## Documentation
 
 - [`AGENTS.md`](AGENTS.md) — working instructions, conventions, definition of done
-- [`docs/BUILD.md`](docs/BUILD.md) — install the SDK and build/deploy
+- [`docs/BUILD.md`](docs/BUILD.md) — build the RPM / install the SDK
 - [`docs/PLATFORM.md`](docs/PLATFORM.md) — researched Sailfish OS facts and sources
 - [`docs/PLAN.md`](docs/PLAN.md) — product scope, architecture, phases, risks
 - [`docs/TODO.md`](docs/TODO.md) — ordered task list

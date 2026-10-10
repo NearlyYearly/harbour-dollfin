@@ -54,7 +54,14 @@ docs/                        # plan, todo, decisions, platform notes
 
 ## Build & run
 
-One-time SDK setup is in [`docs/BUILD.md`](docs/BUILD.md). Day-to-day:
+One-time setup (container image or full SDK) is in [`docs/BUILD.md`](docs/BUILD.md).
+Day-to-day builds need **no SDK** — just podman:
+
+```sh
+scripts/build-rpm.sh            # -> RPMS/harbour-dollfin-<ver>-1.aarch64.rpm
+```
+
+With the full Sailfish SDK installed (for the emulator / one-command deploy):
 
 ```sh
 sfdk tools list                 # installed toolchains/targets

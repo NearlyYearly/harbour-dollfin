@@ -165,6 +165,21 @@ Template:
 
 ---
 
+### D-016 — Build environment
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** This host is immutable Bazzite with no Docker/VirtualBox and password-gated
+  sudo, so installing the full Sailfish SDK (or Platform SDK chroot) is awkward. Meanwhile the
+  community Platform SDK **container** image provides a **5.2.0.15 aarch64** target that the
+  official SDK lacks.
+- **Decision:** Build RPMs with `scripts/build-rpm.sh` using the
+  `coderus/sailfishos-platform-sdk` podman image. The full SDK is optional and only needed for
+  the emulator or `sfdk deploy`.
+- **Consequences:** No emulator; test installs are pushed to the phone by `scp` + `pkcon`.
+  We depend on a third-party image (pin the tag) and on rootless podman working
+  (needs `ignore_chown_errors = true` for the image's UID 100000). ~6 GB of disk for the image.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

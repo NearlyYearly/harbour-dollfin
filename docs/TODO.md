@@ -31,12 +31,11 @@ New tasks go in the phase they belong to.
 - [x] `.gitignore` for build artefacts (`RPMS/`, `*.o`, `Makefile`, …)
 - [x] `lupdate`/`lrelease` wiring + `en`/`nl`/`nb` translation scaffolds (D-014)
 - [x] `LICENSE` (GPL-3.0-or-later)
-- [ ] Install the Sailfish SDK (see `docs/BUILD.md`)
-- [ ] Install the newest aarch64 SailfishOS 5.x build target
-- [ ] `sfdk build` the empty app
-- [ ] Reconcile the scaffold with a real `sfdk init --type qtquick2-app` run; fix any drift
-- [ ] Deploy to the Jolla Phone 2026
-- [ ] Verify it launches from the app grid and the cover renders
+- [x] Build the RPM in the Platform SDK container (`scripts/build-rpm.sh`, 0 rpmlint errors)
+- [x] Reconcile the scaffold with the official `sfdk init` template (files copied from the SDK source)
+- [ ] Install the full Sailfish SDK for the emulator / `sfdk deploy` (optional, `docs/BUILD.md`)
+- [ ] Deploy to the Jolla Phone 2026 and verify it launches from the app grid
+- [ ] Verify the cover renders
 - [ ] Note the Keel porting guide so new code stays Keel-grade (D-002)
 
 ## P2 — Data layer

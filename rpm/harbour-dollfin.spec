@@ -5,7 +5,7 @@ Summary: Local-first medication tracking for trans people
 Version: 0.1
 Release: 1
 Group: Qt/Qt
-License: GPL-3.0-or-later
+License: GPLv3+
 URL: https://github.com/lillelilje/harbour-dollfin
 Source0: %{name}-%{version}.tar.bz2
 Requires: sailfishsilica-qt5 >= 0.10.9
@@ -16,9 +16,9 @@ BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: desktop-file-utils
 
 %description
-Dollfin is a private, local-first medication tracker for trans people on Sailfish OS.
-Track medications, schedules and stock, and get dose reminders through your local calendar.
-No account, no network, no telemetry.
+Dollfin is a private, local-first medication tracker for trans people on
+Sailfish OS. Track medications, schedules and stock, and get dose reminders
+through your local calendar. No account, no network, no telemetry.
 
 %prep
 %autosetup -n %{name}-%{version}
@@ -39,3 +39,7 @@ desktop-file-install --delete-original \
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
+
+%changelog
+* Sat Oct 10 2026 lillelilje <lillelilje@users.noreply.github.com> - 0.1-1
+- Initial project skeleton

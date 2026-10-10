@@ -1,95 +1,91 @@
 # Building dollfin
 
-How to get a working Sailfish SDK and build/deploy this app. Once the SDK is set up, the
-day-to-day commands live in `AGENTS.md`.
+How to produce the `harbour-dollfin` RPM. The default path needs **no SDK install and no
+sudo** — just podman. The full Sailfish SDK is only needed for the emulator or one-command
+`sfdk deploy`.
 
-## Host notes (this machine)
-
-- Host: Bazzite (immutable Fedora / `rpm-ostree`), x86_64, `podman` installed, **no Docker
-  or VirtualBox**, and `sudo` requires a password.
-- That means the SDK install is a manual step: it either needs a virtualization backend
-  (Docker/VirtualBox) or `sudo` for the chroot. Pick one of the options below.
-
-## Which build environment?
-
-| Option | Effort | Gives you |
-|--------|--------|-----------|
-| **A. Sailfish SDK (GUI)** | 2.4 GB download + an engine (Docker or VirtualBox) | `sfdk`, the emulator, one-command deploy to the phone |
-| **B. Platform SDK chroot (CLI)** | `sudo`, ~3 GB | `mb2` command-line builds only, deploy by hand |
-
-Recommendation: try **A** with VirtualBox. If the immutable host fights you, fall back to **B**
-for CLI builds (you have a real Jolla Phone, so the emulator is optional).
-
-### A. Sailfish SDK (full)
+## Option 1 — container build (default)
 
 ```sh
-cd ~/Downloads
-curl -LO https://releases.sailfishos.org/sdk/installers/3.13.5/SailfishSDK-3.13.5-linux64-online.run
-echo "20fbb809a4ad27b71444a2081d56ca84  SailfishSDK-3.13.5-linux64-online.run" | md5sum -c -
-chmod +x SailfishSDK-3.13.5-linux64-online.run
-./SailfishSDK-3.13.5-linux64-online.run
+scripts/build-rpm.sh              # 5.2.0.15 aarch64
+scripts/build-rpm.sh 5.1.0.11     # a different target release
 ```
 
-The installer asks where to install (default `~/SailfishOS`) and which virtualization backend
-to use. On Bazzite you must add that backend first, e.g. `rpm-ostree install VirtualBox` (or a
-Docker package) and reboot. Then use the **SDKMaintenanceTool** to add build targets.
+Output: `RPMS/harbour-dollfin-<version>-1.aarch64.rpm`.
 
-### B. Platform SDK chroot (CLI)
+The script runs the community **Sailfish Platform SDK** image
+([`coderus/sailfishos-platform-sdk`](https://hub.docker.com/r/coderus/sailfishos-platform-sdk/tags),
+the same image behind the `coderus/github-sfos-build` action) in podman and calls
+`mb2 -t SailfishOS-<release>-aarch64 build`.
 
-Follow the official quick start, adapting `PLATFORM_SDK_ROOT` to a path you control:
+Requirements:
 
-```sh
-export PLATFORM_SDK_ROOT=$HOME/sailfishos
-curl -k -O https://releases.sailfishos.org/sdk/installers/latest/Jolla-latest-SailfishOS_Platform_SDK_Chroot-i486.tar.bz2
-sudo mkdir -p $PLATFORM_SDK_ROOT/sdks/sfossdk
-sudo tar --numeric-owner -p -xjf Jolla-latest-SailfishOS_Platform_SDK_Chroot-i486.tar.bz2 -C $PLATFORM_SDK_ROOT/sdks/sfossdk
-$PLATFORM_SDK_ROOT/sdks/sfossdk/sdk-chroot
-```
+- `podman` (already on this host).
+- ~6 GB free for the image (first run pulls ~5 GB) plus the extracted layers.
+- The host user's rootless `storage.conf` must allow unmappable UIDs, because the image
+  contains files owned by UID 100000, which is outside the default subuid range. This repo's
+  setup added `~/.config/containers/storage.conf`:
 
-Inside, add a build target and build with `mb2`. See
-[docs.sailfishos.org/Tools/Platform_SDK](https://docs.sailfishos.org/Tools/Platform_SDK/).
+  ```toml
+  [storage]
+  driver = "overlay"
 
-## Build targets
+  [storage.options.overlay]
+  ignore_chown_errors = "true"
+  ```
 
-SDK 3.13.5 ships Sailfish OS **5.1.0.11** targets (including `aarch64`). There is no 5.2 target
-yet — build against 5.1 and test the RPM on the Jolla Phone 2026 / 5.2 (risk R2 in `PLAN.md`).
-Newer OS targets appear as **Early Access** components in the SDKMaintenanceTool.
+Why the script does odd things: the image's build user (`mersdk`, UID 100000) is outside the
+rootless subuid range, so podman cannot run as it directly, and `mb2` refuses to run as root.
+The script starts the container as root, moves `mersdk` into the subuid range
+(`usermod -u 1000`), and drops to it with `chroot --userspec` (no PAM, unlike `su`).
 
-```sh
-sfdk tools list          # see what is installed
-sfdk target list         # see available OS targets
-sfdk config target SailfishOS-5.1.0.11-aarch64
-```
+### Targets
 
-aarch64 only (decision D-001). Do not add armv7hl.
+The container ships **5.2.0.15** and **5.1.0.11** targets for `aarch64`, `armv7hl` and `i486`.
+We build **aarch64 only** (decision D-001). The official Sailfish SDK (Option 2) currently
+only ships 5.1 targets, so the container is ahead here.
 
-## Build and deploy
+## Deploying to the phone
 
-```sh
-sfdk build                 # produces RPMS/harbour-dollfin-<ver>-1.aarch64.rpm
-sfdk build --sign          # GPG-signed (release only)
-sfdk deploy --device <name>   # install onto the phone
-sfdk deploy --manual          # emulator
-```
-
-The device must have **Developer mode** enabled and be reachable over USB/WLAN SSH. Set it up
-once in **Tools → Options → Devices** (or Qt Creator → Preferences → Devices).
-
-## Test the sandbox
-
-Sandboxing is off when the app is launched from the IDE. To exercise the real sailjail profile:
-
-```sh
-sailjail /usr/bin/harbour-dollfin
-```
-
-## Manual install (no SDK deploy)
-
-Copy the RPM to the phone and install it there:
+There is no `sfdk deploy` without the SDK. Test installs can be pushed by hand:
 
 ```sh
 scp RPMS/harbour-dollfin-*-1.aarch64.rpm defaultuser@<phone-ip>:
 ssh defaultuser@<phone-ip> "devel-su pkcon install-local harbour-dollfin-*-1.aarch64.rpm"
 ```
 
-Only do this for testing — for users, the app is installed from Storeman.
+Developer mode must be enabled on the phone. Real users install from Storeman.
+
+## Option 2 — full Sailfish SDK (emulator / GUI deploy)
+
+Needed only if you want the Sailfish emulator or `sfdk deploy`.
+
+```sh
+cd ~/Downloads
+curl -LO https://releases.sailfishos.org/sdk/installers/3.13.5/SailfishSDK-3.13.5-linux64-online.run
+echo "20fbb809a4ad27b71444a2081d56ca84  SailfishSDK-3.13.5-linux64-online.run" | md5sum -c -
+chmod +x SailfishSDK-3.13.5-linux64-online.run && ./SailfishSDK-3.13.5-linux64-online.run
+```
+
+It needs Docker or VirtualBox as the build engine, and the emulator needs VirtualBox. On this
+immutable Bazzite host that means `rpm-ostree install …` and a reboot. Day-to-day commands:
+
+```sh
+sfdk tools list
+sfdk config target SailfishOS-5.1.0.11-aarch64
+sfdk build
+sfdk deploy --device <name>
+```
+
+## Option 3 — Platform SDK chroot (CLI, sudo)
+
+The official CLI-only SDK. Needs `sudo` and ~3 GB. See
+[docs.sailfishos.org/Tools/Platform_SDK](https://docs.sailfishos.org/Tools/Platform_SDK/).
+
+## Test the sandbox
+
+Sandboxing is off when launched from the IDE. On a device/emulator, exercise the real profile:
+
+```sh
+sailjail /usr/bin/harbour-dollfin
+```
