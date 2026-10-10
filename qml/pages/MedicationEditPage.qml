@@ -9,15 +9,53 @@ Page {
 
     property int medicationId: -1
 
+    // Index 0 is always "Custom": pick it to type any medication name (D-017).
+    property var medicationNames: [
+        qsTr("Custom"),
+        qsTr("Estradiol"),
+        qsTr("Estradiol valerate"),
+        qsTr("Estradiol hemihydrate"),
+        qsTr("Estradiol cypionate"),
+        qsTr("Estradiol enanthate"),
+        qsTr("Estradiol benzoate"),
+        qsTr("Estradiol undecylate"),
+        qsTr("Conjugated estrogens"),
+        qsTr("Ethinylestradiol"),
+        qsTr("Testosterone"),
+        qsTr("Testosterone enanthate"),
+        qsTr("Testosterone cypionate"),
+        qsTr("Testosterone undecanoate"),
+        qsTr("Spironolactone"),
+        qsTr("Cyproterone acetate"),
+        qsTr("Bicalutamide"),
+        qsTr("Finasteride"),
+        qsTr("Dutasteride"),
+        qsTr("Leuprorelin"),
+        qsTr("Goserelin"),
+        qsTr("Triptorelin"),
+        qsTr("Progesterone"),
+        qsTr("Medroxyprogesterone acetate")
+    ]
+
+    property var methods: [
+        qsTr("Pill"), qsTr("Gel"), qsTr("Patch"), qsTr("Injection"),
+        qsTr("Spray"), qsTr("Implant"), qsTr("Other")
+    ]
+
+    // Micro sign (U+00B5) as used on packaging.
+    property var units: ["mg", "µg", "g", "ml", "IU", "%"]
+
     allowedOrientations: Orientation.All
 
     function save() {
+        var name = medCombo.currentIndex === 0 ? nameField.text
+                                               : page.medicationNames[medCombo.currentIndex]
         var data = {
             "id": medicationId,
-            "name": nameField.text,
-            "form": formField.text,
+            "name": name,
+            "form": page.methods[methodCombo.currentIndex],
             "strength": parseFloat(strengthField.text) || 0,
-            "unit": unitField.text,
+            "unit": page.units[unitCombo.currentIndex],
             "notes": notesField.text,
             "active": true
         }
@@ -30,13 +68,25 @@ Page {
     }
 
     Component.onCompleted: {
+        methodCombo.currentIndex = page.methods.length - 1
+        unitCombo.currentIndex = 0
         if (medicationId >= 0) {
             var m = app.medication(medicationId)
-            nameField.text = m.name
-            formField.text = m.form
+            var nameIndex = page.medicationNames.indexOf(m.name)
+            if (nameIndex > 0) {
+                medCombo.currentIndex = nameIndex
+            } else {
+                medCombo.currentIndex = 0
+                nameField.text = m.name
+            }
+            var methodIndex = page.methods.indexOf(m.form)
+            methodCombo.currentIndex = methodIndex >= 0 ? methodIndex : page.methods.length - 1
             strengthField.text = m.strength > 0 ? String(m.strength) : ""
-            unitField.text = m.unit
+            var unitIndex = page.units.indexOf(m.unit)
+            unitCombo.currentIndex = unitIndex >= 0 ? unitIndex : 0
             notesField.text = m.notes
+        } else {
+            medCombo.currentIndex = 0
         }
     }
 
@@ -57,23 +107,38 @@ Page {
                 title: medicationId >= 0 ? qsTr("Edit medication") : qsTr("New medication")
             }
 
+            ComboBox {
+                id: medCombo
+                label: qsTr("Medication")
+                menu: ContextMenu {
+                    Repeater {
+                        model: page.medicationNames
+                        MenuItem { text: modelData }
+                    }
+                }
+            }
+
             TextField {
                 id: nameField
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
-                label: qsTr("Name")
+                visible: medCombo.currentIndex === 0
+                label: qsTr("Custom name")
                 placeholderText: qsTr("Any medication you take")
                 EnterKey.enabled: text.length > 0
                 EnterKey.iconSource: "image://theme/icon-m-enter-accept"
                 EnterKey.onClicked: page.save()
             }
 
-            TextField {
-                id: formField
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                label: qsTr("Form")
-                placeholderText: qsTr("tablet, gel, patch, injection…")
+            ComboBox {
+                id: methodCombo
+                label: qsTr("Method")
+                menu: ContextMenu {
+                    Repeater {
+                        model: page.methods
+                        MenuItem { text: modelData }
+                    }
+                }
             }
 
             Row {
@@ -89,11 +154,16 @@ Page {
                     validator: DoubleValidator {}
                 }
 
-                TextField {
-                    id: unitField
+                ComboBox {
+                    id: unitCombo
                     width: parent.width * 0.5 - Theme.paddingMedium
                     label: qsTr("Unit")
-                    placeholderText: qsTr("mg")
+                    menu: ContextMenu {
+                        Repeater {
+                            model: page.units
+                            MenuItem { text: modelData }
+                        }
+                    }
                 }
             }
 

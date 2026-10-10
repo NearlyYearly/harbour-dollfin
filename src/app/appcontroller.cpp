@@ -45,7 +45,7 @@ QString timesToJson(const QList<QTime> &times)
     return parts.join(QLatin1Char(' '));
 }
 
-QVariantMap regimenToMap(const Regimen &r, const QString &medicationName)
+QVariantMap regimenToMap(const Regimen &r, const Medication &medication)
 {
     QVariantList days;
     for (int day : r.daysOfWeek)
@@ -54,13 +54,20 @@ QVariantMap regimenToMap(const Regimen &r, const QString &medicationName)
     for (const QTime &time : r.times)
         times.append(time.toString(QStringLiteral("HH:mm")));
 
+    // Dose/strength/route live on the medication, not the schedule.
+    QString doseText;
+    if (medication.strength > 0.0)
+        doseText = QString::number(medication.strength) + QLatin1Char(' ') + medication.unit;
+    else
+        doseText = medication.unit;
+    if (!medication.form.isEmpty())
+        doseText = doseText.isEmpty() ? medication.form
+                                      : (medication.form + QStringLiteral(" · ") + doseText);
+
     QVariantMap map;
     map[QStringLiteral("id")] = r.id;
     map[QStringLiteral("medicationId")] = r.medicationId;
-    map[QStringLiteral("medicationName")] = medicationName;
-    map[QStringLiteral("dose")] = r.dose;
-    map[QStringLiteral("unit")] = r.unit;
-    map[QStringLiteral("route")] = r.route;
+    map[QStringLiteral("medicationName")] = medication.name;
     map[QStringLiteral("intervalDays")] = r.intervalDays;
     map[QStringLiteral("daysOfWeek")] = days;
     map[QStringLiteral("times")] = times;
@@ -68,15 +75,7 @@ QVariantMap regimenToMap(const Regimen &r, const QString &medicationName)
     map[QStringLiteral("startDate")] = r.startDate.toString(Qt::ISODate);
     map[QStringLiteral("endDate")] = r.endDate.isValid() ? r.endDate.toString(Qt::ISODate) : QString();
     map[QStringLiteral("active")] = r.active;
-
-    QString dose;
-    if (r.dose > 0.0)
-        dose = QString::number(r.dose) + QLatin1Char(' ') + r.unit;
-    else
-        dose = r.unit;
-    if (!r.route.isEmpty())
-        dose = dose.isEmpty() ? r.route : (r.route + QStringLiteral(" · ") + dose);
-    map[QStringLiteral("doseText")] = dose.trimmed();
+    map[QStringLiteral("doseText")] = doseText.trimmed();
     return map;
 }
 
@@ -129,10 +128,8 @@ QVariantList AppController::regimens() const
 {
     QVariantList list;
     const QList<Regimen> items = m_store.regimens();
-    for (const Regimen &r : items) {
-        const Medication m = m_store.medication(r.medicationId);
-        list.append(regimenToMap(r, m.name));
-    }
+    for (const Regimen &r : items)
+        list.append(regimenToMap(r, m_store.medication(r.medicationId)));
     return list;
 }
 
@@ -154,7 +151,8 @@ QVariantList AppController::todayDoses() const
                 continue;
             const QDateTime scheduledUtc = scheduled.toUTC();
 
-            QVariantMap map = regimenToMap(r, med.name);
+            QVariantMap map = regimenToMap(r, med);
+            map[QStringLiteral("regimenId")] = r.id;
             map[QStringLiteral("scheduledAt")] = scheduledUtc.toString(Qt::ISODate);
             map[QStringLiteral("time")] = time.toString(QStringLiteral("HH:mm"));
 
@@ -230,7 +228,7 @@ QVariantMap AppController::medication(int id) const
 QVariantMap AppController::regimen(int id) const
 {
     const Regimen r = m_store.regimen(id);
-    return regimenToMap(r, m_store.medication(r.medicationId).name);
+    return regimenToMap(r, m_store.medication(r.medicationId));
 }
 
 bool AppController::saveMedication(const QVariantMap &data)
@@ -298,6 +296,7 @@ bool AppController::logDose(int regimenId, int medicationId,
 {
     const QDateTime scheduled = QDateTime::fromString(scheduledAtIso, Qt::ISODate);
     const Regimen r = m_store.regimen(regimenId);
+    const Medication med = m_store.medication(r.medicationId >= 0 ? r.medicationId : medicationId);
 
     // Update the existing log for this exact scheduled dose, if any.
     const QList<Intake> intakes = m_store.intakes(medicationId);
@@ -320,8 +319,8 @@ bool AppController::logDose(int regimenId, int medicationId,
     intake.medicationId = medicationId;
     intake.scheduledAt = scheduled;
     intake.takenAt = QDateTime::currentDateTimeUtc();
-    intake.amount = r.dose;
-    intake.unit = r.unit;
+    intake.amount = med.strength;
+    intake.unit = med.unit;
     intake.status = status;
     const bool ok = m_store.addIntake(intake);
     if (ok)

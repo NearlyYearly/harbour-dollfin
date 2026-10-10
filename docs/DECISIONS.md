@@ -255,6 +255,20 @@ Template:
 
 ---
 
+### D-022 — Medication, method and unit pickers
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Free-text-only medication entry was clunky, and method/unit were free text too. The
+  reference app (mona) forces a fixed list; we want the best of both.
+- **Decision:** The medication field is a **dropdown of common HRT medications with "Custom"
+  first**; choosing Custom reveals a free-text name field, so any medication is still possible.
+  **Method** (pill / gel / patch / injection / …) and **unit** (mg, µg, g, ml, IU, %) are fixed
+  dropdowns — no custom units, so entries stay consistent (µ is the micro sign U+00B5).
+  **Strength, unit and method live on the medication**; a schedule only carries timing.
+- **Consequences:** Refines D-017 (the data model still stores the name as free text). The
+  schedule editor no longer asks for dose/unit/route, which were redundant.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

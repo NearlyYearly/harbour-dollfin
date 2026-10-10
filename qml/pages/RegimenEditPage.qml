@@ -9,6 +9,7 @@ Page {
 
     property int medicationId: -1
     property int regimenId: -1
+    property string medicationName: ""
 
     property var times: []
     property var weekdays: []
@@ -29,9 +30,6 @@ Page {
         var data = {
             "id": regimenId,
             "medicationId": medicationId,
-            "dose": parseFloat(doseField.text) || 0,
-            "unit": unitField.text,
-            "route": routeField.text,
             "intervalDays": repeatMode === 1 ? Math.max(1, parseInt(intervalField.text) || 1) : 1,
             "daysOfWeek": repeatMode === 2 ? weekdays : [],
             "times": times,
@@ -55,11 +53,9 @@ Page {
     }
 
     Component.onCompleted: {
+        medicationName = app.medication(medicationId).name
         if (regimenId >= 0) {
             var r = app.regimen(regimenId)
-            doseField.text = r.dose > 0 ? String(r.dose) : ""
-            unitField.text = r.unit
-            routeField.text = r.route
             times = r.times
             weekdays = r.daysOfWeek
             if (r.daysOfWeek.length > 0) {
@@ -96,29 +92,13 @@ Page {
                 title: regimenId >= 0 ? qsTr("Edit schedule") : qsTr("New schedule")
             }
 
-            TextField {
-                id: doseField
+            Label {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
-                label: qsTr("Dose")
-                inputMethodHints: Qt.ImhFormattedNumbersOnly
-                validator: DoubleValidator {}
-            }
-
-            TextField {
-                id: unitField
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                label: qsTr("Unit")
-                placeholderText: qsTr("mg")
-            }
-
-            TextField {
-                id: routeField
-                x: Theme.horizontalPageMargin
-                width: parent.width - 2 * Theme.horizontalPageMargin
-                label: qsTr("Route")
-                placeholderText: qsTr("oral, gel, patch, injection…")
+                text: page.medicationName
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                truncationMode: TruncationMode.Fade
             }
 
             ComboBox {

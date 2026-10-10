@@ -52,17 +52,18 @@ void dollfinMessageHandler(QtMsgType type, const QMessageLogContext &, const QSt
 
 int main(int argc, char *argv[])
 {
-    // Sandbox-friendly data location: ~/.local/share/harbour-dollfin/
+    QScopedPointer<QGuiApplication> application(SailfishApp::application(argc, argv));
+    // Must match [X-Sailjail] in the .desktop so AppDataLocation is the
+    // sandbox-provided private dir (~/.local/share/org.dollfin/Dollfin).
+    application->setOrganizationName(QStringLiteral("org.dollfin"));
+    application->setApplicationName(QStringLiteral("Dollfin"));
+
     const QString dataDir =
-        QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-        + QStringLiteral("/harbour-dollfin");
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dataDir);
     g_logFilePath = dataDir + QStringLiteral("/dollfin.log");
     qInstallMessageHandler(dollfinMessageHandler);
-
-    QScopedPointer<QGuiApplication> application(SailfishApp::application(argc, argv));
-    application->setApplicationName(QStringLiteral("harbour-dollfin"));
-    application->setOrganizationName(QStringLiteral("org.dollfin"));
+    qInfo() << "dollfin: data dir" << dataDir;
 
     dollfin::AppController controller;
     QString error;
