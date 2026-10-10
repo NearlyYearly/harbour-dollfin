@@ -269,6 +269,21 @@ Template:
 
 ---
 
+### D-023 — Stock semantics and backup format
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** P5/P6. Stock needs a simple, predictable rule; backup must survive future schema
+  changes.
+- **Decision:** A stock record keeps **quantity + unit + low threshold + expiry + source**
+  (source = prescriber / pharmacy / where it came from, migration v2). Quantity is a **count of
+  doses**; each *taken* dose decrements it by one, and undoing/deleting a taken dose adds it
+  back. `quantity <= lowThreshold` flags the medication as low. Backups are **JSON: a generic
+  dump of every table's columns**, imported replace-all inside a transaction.
+- **Consequences:** Decrement is one per logged dose, independent of the dose amount — good
+  enough for “how many are left”, revisit if users track partial doses. The generic dump keeps
+  working as columns are added; import replaces everything, and the UI warns about that.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

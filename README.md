@@ -39,10 +39,23 @@ scripts/build-rpm.sh   # -> RPMS/harbour-dollfin-<version>-1.aarch64.rpm
 Uses podman and a Sailfish Platform SDK container; no SDK install required. See
 [`docs/BUILD.md`](docs/BUILD.md).
 
+## Features
+
+- Free-text **medications** (dropdown of common HRT meds, or “Custom”) with method, strength
+  and unit
+- **Schedules**: every day, every N days, or weekly on chosen weekdays, with multiple times
+- **Today** screen to tick a dose taken/skipped, plus a **cover** showing today's doses
+- **History** of logged doses
+- **Stock** per medication with low-stock warning and a source (prescriber/pharmacy)
+- **Calendar reminders** (opt-in) and **`.ics` export**
+- **JSON backup** export/import
+- English, Dutch and Norwegian Bokmål
+
 ## Documentation
 
 - [`AGENTS.md`](AGENTS.md) — working instructions, conventions, definition of done
 - [`docs/BUILD.md`](docs/BUILD.md) — build the RPM / install the SDK
+- [`docs/PUBLISH.md`](docs/PUBLISH.md) — Storeman / OpenRepos release runbook
 - [`docs/PLATFORM.md`](docs/PLATFORM.md) — researched Sailfish OS facts and sources
 - [`docs/PLAN.md`](docs/PLAN.md) — product scope, architecture, phases, risks
 - [`docs/TODO.md`](docs/TODO.md) — ordered task list

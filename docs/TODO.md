@@ -99,7 +99,7 @@ Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the a
 - [x] JSON import (replace-all, in a transaction, validated)
 - [x] File access via the `Downloads` sailjail permission (D-013)
 - [x] Export/import round-trip test
-- [ ] Translate the UI to Dutch (`nl`) and Norwegian Bokmål (`nb`)
+- [x] Translate the UI to Dutch (`nl`) and Norwegian Bokmål (`nb`); usable by adding more
 
 ## P7 — Polish
 
@@ -108,18 +108,22 @@ Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the a
 - [ ] Performance: page load, smooth animations, memory (test with `smem`)
 - [ ] Accessibility: contrast, tap targets, screen-reader labels
 - [ ] Wording review for neutrality and safety
-- [ ] Remove or gate the development message log (`dollfin.log`) before release — it writes
-      Qt/QML messages to disk and isn't appropriate for a privacy app in production
-- [ ] Icon and store screenshots
+- [x] Remove or gate the development message log — now off unless a `debug` marker file or
+      `DOLLFIN_DEBUG` is present, so a release build writes nothing to disk
+- [x] App icon (`assets/icon/generate.py` -> `icons/<size>/`, 86/108/128/172)
+- [ ] Store screenshots
+- [ ] Full UI Definition-of-Done pass on the device
 
 ## P8 — Publish (Storeman)
 
-- [ ] Finalise `.spec`, `.changes` and version
-- [ ] Generate/import a GPG key, configure `sfdk`, `sfdk build --sign`
-- [ ] Verify package with `rpm -K`
-- [ ] Install on a clean Jolla Phone 2026 via RPM and verify
+See [`PUBLISH.md`](PUBLISH.md) for the full runbook and the store description text.
+
+- [x] `.spec` finalised, versioning + `%changelog` in place
+- [x] Build runbook (`scripts/build-rpm.sh`), tests (`scripts/run-tests.sh`)
+- [ ] Install on a clean Jolla Phone 2026 and verify
+- [ ] (optional) sign the RPM with a GPG key and publish the key
 - [ ] Create the OpenRepos project and upload the RPM
-- [ ] Add screenshots and a description
+- [ ] Add screenshots and the description
 - [ ] Install through Storeman and confirm the listing
 - [ ] Tag the release in git
 

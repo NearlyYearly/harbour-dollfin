@@ -20,9 +20,12 @@
 namespace {
 
 QString g_logFilePath;
+QString g_debugFlagPath;
+bool g_forceFileLog = false;
 
-// During development this mirrors Qt/QML messages to a file we can pull over
-// ssh (the system journal needs root). Revisit before release.
+// Messages always go to stderr. They are mirrored to a file only when logging
+// is explicitly enabled (the `debug` marker file, or DOLLFIN_DEBUG), so a
+// release build writes nothing to disk.
 void dollfinMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &message)
 {
     const char *level = "info";
@@ -39,12 +42,15 @@ void dollfinMessageHandler(QtMsgType type, const QMessageLogContext &, const QSt
                                   QString::fromLatin1(level), message);
     std::fprintf(stderr, "%s\n", qPrintable(line));
 
-    if (!g_logFilePath.isEmpty()) {
-        QFile file(g_logFilePath);
-        if (file.open(QIODevice::Append | QIODevice::Text)) {
-            file.write(line.toUtf8());
-            file.write("\n");
-        }
+    if (g_logFilePath.isEmpty())
+        return;
+    if (!g_forceFileLog && !QFile::exists(g_debugFlagPath))
+        return;
+
+    QFile file(g_logFilePath);
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        file.write(line.toUtf8());
+        file.write("\n");
     }
 }
 
@@ -62,6 +68,8 @@ int main(int argc, char *argv[])
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir().mkpath(dataDir);
     g_logFilePath = dataDir + QStringLiteral("/dollfin.log");
+    g_debugFlagPath = dataDir + QStringLiteral("/debug");
+    g_forceFileLog = qEnvironmentVariableIsSet("DOLLFIN_DEBUG");
     qInstallMessageHandler(dollfinMessageHandler);
     qInfo() << "dollfin: data dir" << dataDir;
 
