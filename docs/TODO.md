@@ -54,17 +54,16 @@ New tasks go in the phase they belong to.
 
 ## P3 — Core UI
 
-- [ ] Medications list page + empty state
-- [ ] Add/edit medication page: free-text name, optional quick-pick of common meds (D-017)
-- [ ] Add/edit regimen page (dose, route, times, interval, dates)
-- [ ] Today page: due/upcoming doses, taken/skipped actions, next-dose countdown
-- [ ] History page: list of intakes with edit
+- [x] Medications list page + empty state
+- [x] Add/edit medication page (free-text name; optional quick-pick deferred, D-017)
+- [x] Add/edit regimen page (dose, route, times, interval, weekly days, dates)
+- [x] Today page: today's doses with taken/skipped actions
+- [x] History page: list of logged intakes with delete
+- [x] Cover: today's doses with a status symbol + a cover action to log the next dose
+- [ ] Next-dose countdown on Today
 - [ ] Calendar/month view of intakes
-- [ ] Cover: today's doses with per-dose status (emoji: taken / not yet / missed), and a
-      bottom cover action to open Dollfin and log a dose (P3 requirement; Sailfish
-      `CoverActionList`)
-- [ ] Error and empty states for every page
-- [ ] All strings wrapped in `qsTr()`
+- [ ] Fuller error states (DB open failure and save failures surfaced in the UI)
+- [x] All user-facing strings wrapped in `qsTr()`
 
 ## P4 — Reminders
 

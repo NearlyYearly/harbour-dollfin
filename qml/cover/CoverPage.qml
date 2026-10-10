@@ -3,12 +3,64 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../dollfin.js" as Dollfin
 
 CoverBackground {
-    Label {
-        anchors.centerIn: parent
-        text: qsTr("Dollfin")
-        color: Theme.primaryColor
-        font.pixelSize: Theme.fontSizeLarge
+    id: cover
+
+    function pendingDoses() {
+        var all = app.todayDoses
+        var pending = 0
+        for (var i = 0; i < all.length; ++i) {
+            if (all[i].status !== "taken" && all[i].status !== "skipped")
+                ++pending
+        }
+        return pending
+    }
+
+    Column {
+        anchors.fill: parent
+        anchors.margins: Theme.paddingMedium
+        spacing: Theme.paddingSmall
+
+        Label {
+            width: parent.width
+            text: qsTr("Today")
+            color: Theme.secondaryColor
+            font.pixelSize: Theme.fontSizeExtraSmall
+        }
+
+        Repeater {
+            model: app.todayDoses
+            Row {
+                width: parent.width
+                Label {
+                    width: parent.width - Theme.fontSizeLarge
+                    text: modelData.time + "  " + modelData.medicationName
+                    color: Theme.primaryColor
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    elide: Text.ElideRight
+                }
+                Label {
+                    text: Dollfin.statusSymbol(modelData.status)
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                }
+            }
+        }
+
+        Label {
+            visible: app.todayDoses.length === 0
+            width: parent.width
+            text: qsTr("No doses today")
+            color: Theme.secondaryColor
+            font.pixelSize: Theme.fontSizeExtraSmall
+        }
+    }
+
+    CoverActionList {
+        CoverAction {
+            iconSource: "image://theme/icon-cover-new"
+            onTriggered: app.logNextDoseTaken()
+        }
     }
 }

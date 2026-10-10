@@ -13,14 +13,26 @@ TARGET = harbour-dollfin
 
 CONFIG += sailfishapp
 
-SOURCES += src/harbour-dollfin.cpp
+INCLUDEPATH += $$PWD/src
+
+SOURCES += \
+    src/harbour-dollfin.cpp \
+    src/app/appcontroller.cpp
+
+HEADERS += src/app/appcontroller.h
 
 include(src/core/core.pri)
 
 DISTFILES += \
     qml/harbour-dollfin.qml \
+    qml/dollfin.js \
     qml/cover/CoverPage.qml \
     qml/pages/TodayPage.qml \
+    qml/pages/MedicationsPage.qml \
+    qml/pages/MedicationEditPage.qml \
+    qml/pages/RegimensPage.qml \
+    qml/pages/RegimenEditPage.qml \
+    qml/pages/HistoryPage.qml \
     rpm/$${TARGET}.spec \
     translations/*.ts \
     $${TARGET}.desktop
