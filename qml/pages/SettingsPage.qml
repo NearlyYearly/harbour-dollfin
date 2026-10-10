@@ -99,7 +99,6 @@ Page {
 
     Dialog {
         id: consentDialog
-        title: qsTr("Calendar reminders")
 
         onAccepted: {
             app.setRemindersConsent(true)
@@ -110,6 +109,8 @@ Page {
         Column {
             width: parent.width
             spacing: Theme.paddingMedium
+
+            DialogHeader { title: qsTr("Calendar reminders") }
 
             Label {
                 x: Theme.horizontalPageMargin

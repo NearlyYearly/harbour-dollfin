@@ -2,7 +2,7 @@ Name: harbour-dollfin
 
 Summary: Local-first medication tracking for trans people
 
-Version: 0.1
+Version: 0.2
 Release: 1
 Group: Qt/Qt
 License: GPLv3+
@@ -42,5 +42,7 @@ desktop-file-install --delete-original \
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 
 %changelog
+* Sat Oct 10 2026 lillelilje <lillelilje@users.noreply.github.com> - 0.2-1
+- Medications and schedules, Today and history, calendar reminders
 * Sat Oct 10 2026 lillelilje <lillelilje@users.noreply.github.com> - 0.1-1
 - Initial project skeleton
