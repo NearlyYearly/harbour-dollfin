@@ -70,10 +70,10 @@ Page {
             } else {
                 repeatMode = 0
             }
-            startDate = new Date(r.startDate)
+            startDate = new Date(r.startDate + "T00:00:00")
             if (r.endDate) {
                 hasEndDate = true
-                endDate = new Date(r.endDate)
+                endDate = new Date(r.endDate + "T00:00:00")
             }
         }
         repeatCombo.currentIndex = repeatMode
@@ -208,7 +208,7 @@ Page {
 
             ValueButton {
                 label: qsTr("Starts")
-                value: Qt.formatDate(page.startDate, Qt.DefaultLocaleShortDate)
+                value: Qt.formatDate(page.startDate, "d MMM yyyy")
                 onClicked: {
                     startDialog.date = page.startDate
                     startDialog.open()
@@ -224,7 +224,7 @@ Page {
             ValueButton {
                 visible: page.hasEndDate
                 label: qsTr("Ends")
-                value: Qt.formatDate(page.endDate, Qt.DefaultLocaleShortDate)
+                value: Qt.formatDate(page.endDate, "d MMM yyyy")
                 onClicked: {
                     endDialog.date = page.endDate
                     endDialog.open()

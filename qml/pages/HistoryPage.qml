@@ -12,7 +12,7 @@ Page {
         var d = new Date(iso)
         if (isNaN(d.getTime()))
             return iso
-        return Qt.formatDateTime(d, Qt.DefaultLocaleShortDate + " HH:mm")
+        return Qt.formatDateTime(d, "d MMM yyyy HH:mm")
     }
 
     SilicaListView {
