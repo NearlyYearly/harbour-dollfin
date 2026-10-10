@@ -45,16 +45,59 @@ The container ships **5.2.0.15** and **5.1.0.11** targets for `aarch64`, `armv7h
 We build **aarch64 only** (decision D-001). The official Sailfish SDK (Option 2) currently
 only ships 5.1 targets, so the container is ahead here.
 
-## Deploying to the phone
+## Testing on the phone
 
-There is no `sfdk deploy` without the SDK. Test installs can be pushed by hand:
+### One-time: prepare the phone
+
+In **Settings > Developer tools**:
+
+1. Turn on **Developer mode** (asks for your security code).
+2. Turn on **Remote connection**.
+3. Tap **Set password for SSH and root access** and set a password. This is both the SSH
+   password and the `devel-su` password.
+
+The phone must be awake and unlocked for SSH to work.
+
+### Connect
+
+- **USB (recommended):** plug the cable in and choose **Developer mode** in the USB dialog
+  on the phone. The phone is always at **192.168.2.15**.
+- **WLAN:** join the same network as the computer; the phone's IP is shown in
+  Settings > Developer tools.
 
 ```sh
-scp RPMS/harbour-dollfin-*-1.aarch64.rpm defaultuser@<phone-ip>:
-ssh defaultuser@<phone-ip> "devel-su pkcon install-local harbour-dollfin-*-1.aarch64.rpm"
+ssh defaultuser@192.168.2.15        # USB
+ssh defaultuser@192.168.x.y         # WLAN
 ```
 
-Developer mode must be enabled on the phone. Real users install from Storeman.
+The user is `defaultuser` on Sailfish OS 5.x (`nemo` only on very old releases).
+
+### Build, copy, install
+
+```sh
+scripts/build-rpm.sh
+scripts/deploy-device.sh                              # USB default
+scripts/deploy-device.sh defaultuser@192.168.x.y      # WLAN
+```
+
+That is `scp` plus `devel-su rpm -Uvh --force` under the hood. Real users install from
+Storeman.
+
+### Logs
+
+Launch the app, then follow its journal from the computer:
+
+```sh
+ssh defaultuser@192.168.2.15 "devel-su journalctl -f _COMM=harbour-dollfin"
+```
+
+### Notes
+
+- USB on Linux should just work — the phone runs a DHCP server on the USB link. If the
+  interface doesn't come up, check `ip a` / `nmcli device`; WLAN is the fallback.
+- Installing an unsigned locally-built RPM is fine; `rpm -Uvh` doesn't do repository
+  signature checks.
+- If you later install the full SDK, `sfdk deploy --device <name>` does all of this.
 
 ## Option 2 — full Sailfish SDK (emulator / GUI deploy)
 

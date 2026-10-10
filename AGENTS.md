@@ -59,6 +59,7 @@ Day-to-day builds need **no SDK** — just podman:
 
 ```sh
 scripts/build-rpm.sh            # -> RPMS/harbour-dollfin-<ver>-1.aarch64.rpm
+scripts/deploy-device.sh        # scp + devel-su install to the phone (USB default)
 ```
 
 With the full Sailfish SDK installed (for the emulator / one-command deploy):

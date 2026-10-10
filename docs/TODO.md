@@ -35,6 +35,7 @@ New tasks go in the phase they belong to.
 - [x] Reconcile the scaffold with the official `sfdk init` template (files copied from the SDK source)
 - [ ] Install the full Sailfish SDK for the emulator / `sfdk deploy` (optional, `docs/BUILD.md`)
 - [ ] Deploy to the Jolla Phone 2026 and verify it launches from the app grid
+      (`scripts/deploy-device.sh`; enable Developer mode + Remote connection first)
 - [ ] Verify the cover renders
 - [ ] Note the Keel porting guide so new code stays Keel-grade (D-002)
 
