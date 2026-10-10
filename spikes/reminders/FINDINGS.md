@@ -2,7 +2,43 @@
 
 Device: Jolla Phone 2026, Sailfish OS **5.2.0.18 (Finlayson)**.
 
-## Confirmed facts
+## Revised understanding (probe run 1)
+
+First probe run: `Calendar.defaultNotebook` was **blank**, `NotebookQuery` empty, and an
+`ImportModel.save()` "succeeded" but nothing appeared in the Calendar app.
+
+Cause: the real calendar DB lives in `~/.local/share/system/privileged/Calendar/mkcal/`,
+owned by group `privileg` with mode `770`. A sandboxed third-party app cannot see it, so
+`org.nemomobile.calendar` falls back to an empty per-user DB (see mKCal `sqlitestorage.cpp`:
+it uses the privileged dir only if it exists **and** is writable). **Direct calendar writes from
+a third-party app are therefore not viable.** We also cannot create a notebook: the API has no
+notebook-creation method.
+
+## Supported path: Calendar UI import via D-Bus
+
+The Calendar app exposes `com.jolla.calendar.ui` (`/com/jolla/calendar/ui`,
+`/usr/share/jolla-calendar/DbusInvoker.qml`), and `Calendar.permission` grants exactly
+`dbus-user.talk com.jolla.calendar.ui`. Relevant methods:
+
+- `importIcsData(icsString)` — open the import UI with **in-memory iCalendar text** (no file)
+- `importFile(fileName)` — import from a file path
+- `viewEventByIdentifier(id, startDate)`, `viewDate(dateTime)`, `openUrl(args)`
+
+The user picks the notebook and confirms; the Calendar app (with real access) writes the event
+and the OS registers the alarm with `timed`. `Nemo.DBus 2.0` (`DBusInterface.call`) is
+installed for making the call.
+
+Consequences for the design:
+
+- We author the iCalendar ourselves, so **recurrence is unlimited** (any `RRULE`).
+- **No direct DB writes, no notebook creation, no `NotebookQuery`.**
+- The notebook choice is the user's, shown in the import UI (transparent; no silent sync leak).
+- Updates: re-import the same event `UID` — the ImportPage detects duplicates.
+- Still no background service needed.
+
+Probe v2 (`SpikePage.qml`) tests `importIcsData` from the sandboxed app.
+
+## Original findings (still valid)
 
 - `timed` **is running**: `/usr/bin/timed --systemd`. Calendar alarms and Clock alarms both
   ride on it, so it is the single reliable wake-up mechanism.
@@ -38,34 +74,33 @@ Device: Jolla Phone 2026, Sailfish OS **5.2.0.18 (Finlayson)**.
 - `timed`'s own recurrence API (`Event::Recurrence`) exposes **`daysOfWeek` only** — no
   arbitrary interval either.
 
-## Candidate mechanisms
+## Candidate mechanisms (revised)
 
-| Mechanism | Permission | Recurrence | Where it shows | Fires closed | Sync risk |
-|-----------|-----------|-----------|----------------|--------------|-----------|
-| `Nemo.Alarms` (clock alarms) | none | weekdays only | **Clock app** + alarm UI | yes | none |
-| `org.nemomobile.calendar` (local notebook) | `Calendar` | full RRULE (daily / every N days / end date) | Calendar app | yes | only if notebook synced |
-| `.ics` export | none | full | user's chosen calendar | yes | user-controlled |
-| companion service | n/a | full | custom | yes | none |
+| Mechanism | Permission | Recurrence | Where it shows | Silent? | Fires closed |
+|-----------|-----------|-----------|----------------|---------|--------------|
+| Calendar UI import (`importIcsData`) | `Calendar` (D-Bus grant) | full RRULE | Calendar app | no — user confirms | yes |
+| `.ics` file export | none | full | user's calendar | no — user imports | yes |
+| `Nemo.Alarms` (clock alarms) | none | weekdays only | Clock app | yes | yes |
+| direct calendar write | `Calendar` | — | — | — | **not viable** |
 
 ## Trade-offs
 
-- **Alarms** are the least-permission option and survive reboot, but they leak into the Clock
-  app (anyone glancing sees "Dollfin: estradiol 2 mg") and cannot express "every 5 days",
-  which real HRT schedules use.
-- **Calendar** supports the schedules we actually need and shows reminders where people
-  already look. Privacy depends on writing to a **local** notebook only (D-006 hard rule).
-- **`.ics`** stays as the always-available fallback.
+- The **Calendar UI import** path is the supported one, handles any schedule, and puts
+  reminders where people already look. Cost: a one-time user confirmation per regimen (and
+  again on schedule changes).
+- **`Nemo.Alarms`** is silent and permission-free but weekly-only and leaks into the Clock app.
+- **`.ics` export** stays as the fallback/backup — and it is the exact string we hand to the
+  Calendar UI, so one code path serves both.
 
-## What the probe must test
+## What the probe must confirm
 
-1. Can a sandboxed app with `Permissions=Calendar` use `org.nemomobile.calendar` to create a
-   **local** notebook and a repeating event with an alarm?
-2. Does that alarm fire with the app closed, and after a reboot?
-3. Can we reliably tell a local notebook from a synced one?
-4. (compare) `Nemo.Alarms` creation with no permission; confirm it appears in the Clock app.
+1. A sandboxed app can call `importIcsData` and the Calendar import UI opens with our event.
+2. After the user confirms, the event lands in the chosen calendar and the alarm fires with the
+   app closed (and after a reboot).
+3. Re-importing the same `UID` updates rather than duplicates.
 
-## Preliminary recommendation
+## Recommendation
 
-Keep **calendar-in-a-local-notebook as primary, `.ics` as fallback** (D-006). Treat
-`Nemo.Alarms` as a possible future "simple daily schedule" mode, not the default, because of
-the Clock-app visibility and the weekday-only recurrence.
+Primary: **generate iCalendar in-app and hand it to the Calendar UI via `importIcsData`**;
+always also offer `.ics` file export. No direct DB writes, no notebook creation, no background
+service. `Nemo.Alarms` stays a possible future "simple daily alarm" mode.

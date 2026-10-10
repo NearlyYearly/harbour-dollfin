@@ -1,8 +1,13 @@
 // TEMPORARY reminder probe — spike/reminders branch only. Delete after P4.
-// Tests whether a sandboxed app can write calendar events (and therefore get
-// reliable timed alarms) via org.nemomobile.calendar.
+//
+// Findings: a sandboxed app CANNOT see the real calendar (it lives in
+// ~/.local/share/system/privileged/, group "privileg"), so direct writes via
+// org.nemomobile.calendar land in an empty fallback DB. The supported path is
+// the Calendar UI's D-Bus import: com.jolla.calendar.ui.importIcsData(ics),
+// which Calendar.permission explicitly allows.
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Nemo.DBus 2.0
 import org.nemomobile.calendar 1.0
 
 Page {
@@ -19,15 +24,25 @@ Page {
         return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + "T"
              + pad(d.getHours()) + pad(d.getMinutes()) + "00"
     }
-    function append(msg) { log += msg + "\n"; console.log("[spike] " + msg) }
+    function append(m) { log += m + "\n"; console.log("[spike] " + m) }
 
-    NotebookQuery {
-        id: notebookQuery
-        targetUid: Calendar.defaultNotebook
+    function buildIcs(minutesAhead) {
+        var start = new Date(Date.now() + minutesAhead * 60000)
+        return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//dollfin//spike//EN\r\n"
+            + "BEGIN:VEVENT\r\nUID:dollfin-probe@dollfin.local\r\n"
+            + "DTSTAMP:" + icalUtc(new Date()) + "\r\n"
+            + "DTSTART:" + icalLocal(start) + "\r\nDURATION:PT15M\r\n"
+            + "RRULE:FREQ=DAILY;INTERVAL=2\r\n"
+            + "SUMMARY:Dollfin probe dose\r\n"
+            + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Dollfin probe dose\r\nTRIGGER:-PT1M\r\nEND:VALARM\r\n"
+            + "END:VEVENT\r\nEND:VCALENDAR\r\n"
     }
 
-    ImportModel {
-        id: importer
+    DBusInterface {
+        id: calendarUi
+        service: "com.jolla.calendar.ui"
+        path: "/com/jolla/calendar/ui"
+        iface: "com.jolla.calendar.ui"
     }
 
     SilicaFlickable {
@@ -48,56 +63,18 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.highlightColor
-                text: "defaultNotebook: " + Calendar.defaultNotebook
-                    + "\nname: " + notebookQuery.name
-                    + "\nlocalCalendar: " + notebookQuery.localCalendar
-                    + "\nreadOnly: " + notebookQuery.isReadOnly
+                text: "defaultNotebook: '" + Calendar.defaultNotebook + "'"
+                    + "\n(blank is expected: the sandbox cannot see the privileged calendar DB)"
             }
 
             Button {
-                text: "Import every-2-days event (+2 min)"
+                text: "Open Calendar import (every 2 days)"
                 onClicked: {
-                    var start = new Date(Date.now() + 2 * 60000)
-                    var ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//dollfin//spike//EN\r\n"
-                        + "BEGIN:VEVENT\r\nUID:dollfin-probe@dollfin.local\r\n"
-                        + "DTSTAMP:" + icalUtc(new Date()) + "\r\n"
-                        + "DTSTART:" + icalLocal(start) + "\r\nDURATION:PT15M\r\n"
-                        + "RRULE:FREQ=DAILY;INTERVAL=2\r\n"
-                        + "SUMMARY:Dollfin probe dose\r\n"
-                        + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Dollfin probe dose\r\nTRIGGER:-PT1M\r\nEND:VALARM\r\n"
-                        + "END:VEVENT\r\nEND:VCALENDAR\r\n"
-                    importer.icsString = ics
-                    importer.targetNotebook = Calendar.defaultNotebook
-                    append("import error=" + importer.error + ", saving...")
-                    var ok = importer.save()
-                    append("import save() -> " + ok + ", error=" + importer.error)
-                }
-            }
-
-            Button {
-                text: "Create daily event via API (+3 min)"
-                onClicked: {
-                    try {
-                        var ev = Calendar.createNewEvent()
-                        ev.displayLabel = "Dollfin API probe"
-                        ev.description = "spike"
-                        ev.calendarUid = Calendar.defaultNotebook
-                        ev.setStartTime(new Date(Date.now() + 3 * 60000), Qt.LocalTime)
-                        ev.recur = CalendarEvent.RecurDaily
-                        ev.reminder = 1
-                        ev.save()
-                        append("createNewEvent().save() called")
-                    } catch (e) {
-                        append("createNewEvent threw: " + e)
-                    }
-                }
-            }
-
-            Button {
-                text: "Remove probe events"
-                onClicked: {
-                    Calendar.removeAll("dollfin-probe@dollfin.local")
-                    append("removeAll(dollfin-probe@dollfin.local) called")
+                    var ics = buildIcs(3)
+                    append("calling com.jolla.calendar.ui.importIcsData (" + ics.length + " bytes)")
+                    calendarUi.call("importIcsData", [ics],
+                        function() { append("importIcsData: call returned") },
+                        function(err) { append("importIcsData error: " + err) })
                 }
             }
 

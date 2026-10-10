@@ -212,6 +212,24 @@ Template:
 
 ---
 
+### D-019 — Reminders go through the Calendar UI import (supersedes D-006's direct write)
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** The probe (`spikes/reminders/FINDINGS.md`) proved a sandboxed third-party app
+  cannot see the real calendar DB (`~/.local/share/system/privileged/`, group `privileg`), so
+  direct writes via `org.nemomobile.calendar` silently landed in an empty fallback DB. The
+  `Calendar` permission instead grants `dbus-user.talk com.jolla.calendar.ui`, and the
+  Calendar app exposes `importIcsData(icsString)` / `importFile(fileName)`.
+- **Decision:** The app **generates iCalendar itself** and hands it to the Calendar UI via
+  `com.jolla.calendar.ui.importIcsData`. It always also offers **`.ics` file export**. No
+  direct DB writes and no notebook creation.
+- **Consequences:** One-time user confirmation per regimen (and again on schedule change); the
+  user picks the notebook in the import UI, so there is no silent sync leak. Recurrence is
+  unlimited because we author the `RRULE`. The `Calendar` permission is retained for the
+  D-Bus grant; still no background service. D-006's "write to a local notebook directly" is
+  void.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:
