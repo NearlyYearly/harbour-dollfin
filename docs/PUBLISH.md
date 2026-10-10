@@ -48,20 +48,34 @@ Publish the public key so people can verify: `gpg --armor --export <id>`.
 
 ### Summary
 
-> Local-first medication tracking for trans people
+```
+Local-first medication tracking for Sailfish OS
+```
 
 ### Description
 
-> Dollfin is a private medication tracker for trans people on Sailfish OS.
->
-> Track medications, schedules and stock, and get dose reminders through your own calendar.
-> Medications are free text — no fixed list — so compounded or unusual preparations work too.
->
-> Everything stays on your phone: no account, no network access, no telemetry. Reminders are
-> added to a calendar you choose, so if you pick one that syncs to a cloud service, only you
-> decide that.
->
-> Open source, GPL-3.0-or-later.
+```
+Dollfin is a private medication tracker for Sailfish OS. It is made for trans people
+managing HRT, but it works for anyone who needs simple, reliable medication tracking.
+
+Everything stays on your phone. No account, no network access, no telemetry.
+
+What it does:
+- Track any medication. Names are free text, so compounded or uncommon preparations work too.
+- Schedules: every day, every N days, or weekly on chosen weekdays, with multiple times a day.
+- A Today screen to tick off doses, and a cover that shows today's doses at a glance.
+- History of everything you have logged.
+- Stock tracking with a low stock warning, plus a source field for your prescriber or pharmacy.
+- Optional calendar reminders, and .ics export.
+- JSON backup export and import.
+- English, Dutch and Norwegian.
+
+Notes:
+- Inspired by Mona (mona-hrt/mona), the open source HRT tracker for Android and iOS.
+- Built with heavy use of AI assistance, with every decision reviewed by a human.
+
+Open source, GPL-3.0-or-later.
+```
 
 ## Storeman
 
