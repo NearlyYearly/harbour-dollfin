@@ -208,18 +208,6 @@ QString AppController::todayLabel() const
     return QDate::currentDate().toString(Qt::DefaultLocaleLongDate);
 }
 
-int AppController::pendingDoses() const
-{
-    int pending = 0;
-    const QVariantList doses = todayDoses();
-    for (const QVariant &value : doses) {
-        const QString status = value.toMap().value(QStringLiteral("status")).toString();
-        if (status != QStringLiteral("taken") && status != QStringLiteral("skipped"))
-            ++pending;
-    }
-    return pending;
-}
-
 QVariantMap AppController::medication(int id) const
 {
     return medicationToMap(m_store.medication(id));
@@ -339,22 +327,6 @@ bool AppController::removeIntake(int intakeId)
     if (ok)
         emit changed();
     return ok;
-}
-
-bool AppController::logNextDoseTaken()
-{
-    const QVariantList doses = todayDoses();
-    for (const QVariant &value : doses) {
-        const QVariantMap dose = value.toMap();
-        const QString status = dose.value(QStringLiteral("status")).toString();
-        if (status == QStringLiteral("taken") || status == QStringLiteral("skipped"))
-            continue;
-        return logDose(dose.value(QStringLiteral("regimenId")).toInt(),
-                       dose.value(QStringLiteral("medicationId")).toInt(),
-                       dose.value(QStringLiteral("scheduledAt")).toString(),
-                       QStringLiteral("taken"));
-    }
-    return false;
 }
 
 } // namespace dollfin

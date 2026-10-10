@@ -59,7 +59,7 @@ New tasks go in the phase they belong to.
 - [x] Add/edit regimen page (dose, route, times, interval, weekly days, dates)
 - [x] Today page: today's doses with taken/skipped actions
 - [x] History page: list of logged intakes with delete
-- [x] Cover: today's doses with a status symbol + a cover action to log the next dose
+- [x] Cover: today's doses with a status symbol (tapping the cover opens the app; no cover action)
 - [ ] Next-dose countdown on Today
 - [ ] Calendar/month view of intakes
 - [ ] Fuller error states (DB open failure and save failures surfaced in the UI)

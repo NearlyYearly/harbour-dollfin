@@ -8,16 +8,6 @@ import "../dollfin.js" as Dollfin
 CoverBackground {
     id: cover
 
-    function pendingDoses() {
-        var all = app.todayDoses
-        var pending = 0
-        for (var i = 0; i < all.length; ++i) {
-            if (all[i].status !== "taken" && all[i].status !== "skipped")
-                ++pending
-        }
-        return pending
-    }
-
     Column {
         anchors.fill: parent
         anchors.margins: Theme.paddingMedium
@@ -54,13 +44,6 @@ CoverBackground {
             text: qsTr("No doses today")
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeExtraSmall
-        }
-    }
-
-    CoverActionList {
-        CoverAction {
-            iconSource: "image://theme/icon-cover-new"
-            onTriggered: app.logNextDoseTaken()
         }
     }
 }

@@ -23,7 +23,6 @@ class AppController : public QObject
     Q_PROPERTY(QVariantList todayDoses READ todayDoses NOTIFY changed)
     Q_PROPERTY(QVariantList history READ history NOTIFY changed)
     Q_PROPERTY(QString todayLabel READ todayLabel NOTIFY changed)
-    Q_PROPERTY(int pendingDoses READ pendingDoses NOTIFY changed)
 
 public:
     explicit AppController(QObject *parent = nullptr);
@@ -35,7 +34,6 @@ public:
     QVariantList todayDoses() const;
     QVariantList history() const;
     QString todayLabel() const;
-    int pendingDoses() const;
 
     Q_INVOKABLE QVariantMap medication(int id) const;
     Q_INVOKABLE QVariantMap regimen(int id) const;
@@ -50,9 +48,6 @@ public:
                              const QString &scheduledAtIso, const QString &status);
     Q_INVOKABLE bool clearIntake(int intakeId);
     Q_INVOKABLE bool removeIntake(int intakeId);
-
-    // Marks the first not-yet-logged dose of today as taken (cover quick action).
-    Q_INVOKABLE bool logNextDoseTaken();
 
 signals:
     void changed();
