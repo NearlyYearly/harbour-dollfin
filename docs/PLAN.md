@@ -32,6 +32,8 @@ routes (oral, sublingual, gel, patch, injection). They need to:
 - **Stock**: quantity per medication, auto-decrement on intake, low-stock warning.
 - **Backup**: export/import all data as a JSON file; manual, never networked.
 - **Languages**: English, Dutch and Norwegian.
+- **Cover**: today's doses with per-dose status (emoji), plus a quick "log a dose" action
+  that opens the app.
 - No `Internet` permission. No account.
 
 ### v0.2+ (backlog, not now)

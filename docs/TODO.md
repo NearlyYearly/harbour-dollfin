@@ -60,7 +60,9 @@ New tasks go in the phase they belong to.
 - [ ] Today page: due/upcoming doses, taken/skipped actions, next-dose countdown
 - [ ] History page: list of intakes with edit
 - [ ] Calendar/month view of intakes
-- [ ] Cover page: next dose summary + quick action
+- [ ] Cover: today's doses with per-dose status (emoji: taken / not yet / missed), and a
+      bottom cover action to open Dollfin and log a dose (P3 requirement; Sailfish
+      `CoverActionList`)
 - [ ] Error and empty states for every page
 - [ ] All strings wrapped in `qsTr()`
 
