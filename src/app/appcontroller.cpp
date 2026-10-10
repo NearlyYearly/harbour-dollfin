@@ -7,10 +7,12 @@
 #include "core/scheduleengine.h"
 
 #include <QDBusConnection>
+#include <QDBusConnectionInterface>
 #include <QDBusInterface>
 #include <QDBusMessage>
 #include <QDate>
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -105,6 +107,32 @@ QList<QTime> toTimeList(const QVariantList &values)
             times.append(time);
     }
     return times;
+}
+
+// The Calendar UI service is D-Bus activated; the first call races the
+// activation, so start it explicitly and retry once.
+bool callCalendarUi(const QString &method, const QVariantList &arguments)
+{
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    if (QDBusConnectionInterface *busInterface = bus.interface())
+        busInterface->startService(QStringLiteral("com.jolla.calendar.ui"));
+
+    QDBusMessage message = QDBusMessage::createMethodCall(
+        QStringLiteral("com.jolla.calendar.ui"),
+        QStringLiteral("/com/jolla/calendar/ui"),
+        QStringLiteral("com.jolla.calendar.ui"),
+        method);
+    message.setArguments(arguments);
+
+    QDBusMessage reply = bus.call(message, QDBus::Block, 10000);
+    if (reply.type() == QDBusMessage::ErrorMessage)
+        reply = bus.call(message, QDBus::Block, 10000);
+
+    if (reply.type() == QDBusMessage::ErrorMessage) {
+        qWarning() << "dollfin: calendar call failed:" << reply.errorMessage();
+        return false;
+    }
+    return true;
 }
 
 } // namespace
@@ -381,15 +409,14 @@ bool AppController::syncCalendarReminders()
     const QString ics = remindersIcs();
     if (ics.isEmpty())
         return false;
+    return callCalendarUi(QStringLiteral("importIcsData"), QVariantList() << ics);
+}
 
-    QDBusInterface iface(QStringLiteral("com.jolla.calendar.ui"),
-                         QStringLiteral("/com/jolla/calendar/ui"),
-                         QStringLiteral("com.jolla.calendar.ui"),
-                         QDBusConnection::sessionBus());
-    if (!iface.isValid())
+bool AppController::openInCalendar(const QString &path)
+{
+    if (path.isEmpty())
         return false;
-    const QDBusMessage reply = iface.call(QStringLiteral("importIcsData"), ics);
-    return reply.type() != QDBusMessage::ErrorMessage;
+    return callCalendarUi(QStringLiteral("importFile"), QVariantList() << path);
 }
 
 QString AppController::exportIcs()

@@ -8,6 +8,7 @@ Page {
     id: page
 
     property string lastResult: ""
+    property string exportedPath: ""
 
     allowedOrientations: Orientation.All
 
@@ -30,11 +31,10 @@ Page {
                 description: qsTr("Add each dose to a calendar so your phone reminds you on time. Recommended.")
                 checked: app.remindersEnabled
                 onCheckedChanged: {
-                    if (checked && !app.remindersConsent) {
+                    if (checked && !app.remindersConsent)
                         consentDialog.open()
-                    } else {
+                    else
                         app.setRemindersEnabled(checked)
-                    }
                 }
             }
 
@@ -45,8 +45,7 @@ Page {
                 visible: !app.remindersConsent
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeExtraSmall
-                text: qsTr("Dollfin never sends anything to a server. Reminders only leave the " +
-                           "phone if you put them in a calendar that syncs to the cloud.")
+                text: qsTr("Dollfin never sends anything to a server. Reminders only leave the phone if you put them in a calendar that syncs to the cloud.")
             }
 
             Button {
@@ -55,9 +54,9 @@ Page {
                 text: qsTr("Update calendar reminders")
                 onClicked: {
                     if (app.syncCalendarReminders())
-                        page.lastResult = qsTr("Sent to the calendar app for confirmation.")
+                        page.lastResult = qsTr("Sent to the Calendar app for confirmation.")
                     else
-                        page.lastResult = qsTr("Nothing to sync yet, or the calendar app is unavailable.")
+                        page.lastResult = qsTr("Could not reach the Calendar app. Make sure a calendar is set up.")
                 }
             }
 
@@ -66,10 +65,13 @@ Page {
                 visible: app.remindersEnabled
                 text: qsTr("Export .ics file")
                 onClicked: {
-                    var path = app.exportIcs()
-                    page.lastResult = path.length > 0
-                        ? qsTr("Saved to %1").arg(path)
-                        : qsTr("Nothing to export yet.")
+                    page.exportedPath = app.exportIcs()
+                    if (page.exportedPath.length > 0) {
+                        page.lastResult = qsTr("Saved to %1").arg(page.exportedPath)
+                        openDialog.open()
+                    } else {
+                        page.lastResult = qsTr("Nothing to export yet. Add a schedule first.")
+                    }
                 }
             }
 
@@ -78,8 +80,8 @@ Page {
                 width: parent.width - 2 * Theme.horizontalPageMargin
                 wrapMode: Text.WordWrap
                 visible: text.length > 0
-                color: Theme.secondaryColor
-                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.highlightColor
+                font.pixelSize: Theme.fontSizeSmall
                 text: page.lastResult
             }
 
@@ -91,8 +93,7 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("Dollfin keeps your medication data on this device. It has no network " +
-                           "access and never collects anything.")
+                text: qsTr("Dollfin keeps your medication data on this device. It has no network access and never collects anything.")
             }
         }
     }
@@ -110,17 +111,17 @@ Page {
             width: parent.width
             spacing: Theme.paddingMedium
 
-            DialogHeader { title: qsTr("Calendar reminders") }
+            DialogHeader {
+                dialog: consentDialog
+                title: qsTr("Calendar reminders")
+            }
 
             Label {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("Dollfin will add each dose as an event in a calendar you choose. " +
-                           "If that calendar is synced to a cloud service (Google, iCloud, " +
-                           "CalDAV), your medication names will be uploaded there too. " +
-                           "For privacy, pick a calendar that stays on this phone.")
+                text: qsTr("Dollfin will add each dose as an event in a calendar you choose. If that calendar is synced to a cloud service (Google, iCloud, CalDAV), your medication names will be uploaded there too. For privacy, pick a calendar that stays on this phone.")
             }
 
             Label {
@@ -130,6 +131,30 @@ Page {
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeExtraSmall
                 text: qsTr("You can turn calendar reminders off here at any time.")
+            }
+        }
+    }
+
+    Dialog {
+        id: openDialog
+
+        onAccepted: app.openInCalendar(page.exportedPath)
+
+        Column {
+            width: parent.width
+            spacing: Theme.paddingMedium
+
+            DialogHeader {
+                dialog: openDialog
+                title: qsTr("Open in Calendar?")
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("The .ics file is saved. Import it into a calendar now?")
             }
         }
     }

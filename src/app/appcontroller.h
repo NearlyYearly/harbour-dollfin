@@ -61,6 +61,7 @@ public:
     Q_INVOKABLE QString remindersIcs() const;
     Q_INVOKABLE bool syncCalendarReminders();
     Q_INVOKABLE QString exportIcs();
+    Q_INVOKABLE bool openInCalendar(const QString &path);
 
 signals:
     void changed();
