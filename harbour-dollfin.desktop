@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=Dollfin
+Icon=harbour-dollfin
+Exec=harbour-dollfin
+
+[X-Sailjail]
+OrganizationName=org.dollfin
+ApplicationName=Dollfin

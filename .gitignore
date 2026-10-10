@@ -1,0 +1,23 @@
+# Sailfish SDK / qmake build artefacts
+Makefile*
+*.o
+*.moc
+moc_*.cpp
+qrc_*.cpp
+*.so
+*.so.*
+*.qm
+RPMS/
+*.pro.user*
+*.debug
+.qmake.stash
+.qmake.cache
+
+# Editor/OS noise
+*~
+.DS_Store
+.directory
+*.swp
+
+# Local scratch
+/tmp/

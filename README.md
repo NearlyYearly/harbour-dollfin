@@ -1,0 +1,41 @@
+# dollfin
+
+A native, local-first medication tracker for trans people, built for **Sailfish OS**.
+
+Track what to take, when, whether you took it, what's left, and how your levels trend —
+all on-device, no account, no cloud, no network.
+
+Status: **planning / pre-alpha** (no app code yet).
+
+## Principles
+
+- **Private by default.** Data never leaves the device. The app must not request the
+  `Internet` permission.
+- **Reliable.** A missed reminder is a real-world harm. Reminder and schedule logic is
+  treated as critical code.
+- **Simple.** Smallest version that does the core job. No accounts, no sync, no telemetry,
+  no dosing advice.
+- **Open.** Free and open source, no subscriptions or premium tiers.
+
+## Target
+
+| Item | Value |
+|------|-------|
+| OS | Sailfish OS 5.x (5.1 Pispala, 5.2 Finlayson) |
+| Primary device | Jolla Phone 2026 (aarch64) |
+| Toolkit | Qt 5.6 QML + Sailfish Silica + C++ (Keel-grade for a future Qt 6 port) |
+| Languages | English, Dutch, Norwegian |
+| Distribution | OpenRepos / Storeman |
+| License | GPL-3.0-or-later |
+
+## Documentation
+
+- [`AGENTS.md`](AGENTS.md) — working instructions, conventions, definition of done
+- [`docs/PLATFORM.md`](docs/PLATFORM.md) — researched Sailfish OS facts and sources
+- [`docs/PLAN.md`](docs/PLAN.md) — product scope, architecture, phases, risks
+- [`docs/TODO.md`](docs/TODO.md) — ordered task list
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — decision log and open questions
+
+## License
+
+GPL-3.0-or-later (see `docs/DECISIONS.md` D-008). A `LICENSE` file is added before release.
