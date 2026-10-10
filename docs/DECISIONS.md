@@ -195,6 +195,23 @@ Template:
 
 ---
 
+### D-018 — Reminder mechanism, refined after device recon
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Recon on 5.2.0.18 (`spikes/reminders/FINDINGS.md`) found that `Base.permission`
+  already lets every sandboxed app talk to `timed` (`com.nokia.time`), and the `Nemo.Alarms`
+  QML plugin can create alarms with no permission. But those alarms are weekday-only
+  (no "every N days") and appear in the **Clock app**, leaking medication data to a very
+  visible place.
+- **Decision:** Keep **D-006** as-is: reminders are OS calendar events in a dedicated **local**
+  notebook (full recurrence) with **`.ics` export** as the fallback. Do **not** use
+  `Nemo.Alarms` as the default. It may return later as an optional "simple daily alarm" mode.
+  The probe in `spikes/reminders/` confirms the calendar path before P4.
+- **Consequences:** We still take the `Calendar` permission. If the probe shows the calendar
+  write is unreliable, `Nemo.Alarms` (no permission) becomes the fallback before a companion
+  background service is considered.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

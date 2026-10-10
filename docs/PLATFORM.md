@@ -99,12 +99,15 @@ Options evaluated (see D-006):
 
 1. **Calendar integration (preferred).** Sailfish's calendar stack is KCalendarCore/mKCal,
    with QML bindings in
-   [nemo-qml-plugin-calendar](https://github.com/sailfishos/nemo-qml-plugin-calendar) that
-   can read/write events, plus import/export tools. The app can create a dedicated **local**
-   calendar of repeating dose events, and `timed` delivers the alarms reliably because it is
-   the OS calendar doing it.
-   - Needs the **`Calendar`** sailjail permission ("Display and editing of calendar events"),
-     which exists but is **not** on the Harbour-allowed list (fine for Storeman).
+   [nemo-qml-plugin-calendar](https://github.com/sailfishos/nemo-qml-plugin-calendar)
+   (`org.nemomobile.calendar`: `CalendarApi`, `CalendarEventModification`,
+   `CalendarNotebookModel`, …) that read/write events, plus import/export tools. The app can
+   create a dedicated **local** calendar of repeating dose events, and `timed` delivers the
+   alarms reliably because it is the OS calendar doing it.
+   - Needs the **`Calendar`** sailjail permission, which is **not** on the Harbour-allowed
+     list (fine for Storeman). Note it does *not* expose a calendar D-Bus API — it grants the
+     privileged calendar data directory (`privileged-data Calendar`) plus
+     `dbus-user.talk com.jolla.calendar.ui` to open the Calendar UI.
    - **Privacy caveat:** if the target calendar is a synced CalDAV/Google account, HRT
      medication events would upload to a server. Only ever write to a **local** notebook and
      warn if that is not possible.
@@ -112,7 +115,13 @@ Options evaluated (see D-006):
    a calendar of their choice. No automatic sync, no `Calendar` permission for the app, but
    one-way and manual (re-export when the schedule changes). Forum history shows the import
    UX on older releases was buggy; re-test on 5.2.
-3. **Separate background-service package.** A companion RPM (systemd user service / `timed`
+3. **`Nemo.Alarms` / `timed` directly.** The `Nemo.Alarms` QML plugin
+   (`nemo-qml-plugin-alarms-qt5`) creates `timed` alarms with **no permission at all** —
+   `Base.permission`, granted to every app, already allows `dbus-system.talk com.nokia.time`.
+   - Recurrence is **weekdays only** (`daysOfWeek` = `mtwTfsS`); no "every N days".
+   - Created alarms are typed `clock`/`countdown`, so they **appear in the Clock app** and are
+     handled by `jolla-alarm-ui` — a privacy/UX cost for medication data.
+4. **Separate background-service package.** A companion RPM (systemd user service / `timed`
    client) installed alongside the app. Most powerful and fully app-controlled, but adds a
    second package to build, sign, publish and keep in sync — and is unverified for sandboxed
    third-party use. Treat as backlog unless 1 and 2 fail.
