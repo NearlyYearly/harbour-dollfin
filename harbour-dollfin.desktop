@@ -6,6 +6,5 @@ Icon=harbour-dollfin
 Exec=harbour-dollfin
 
 [X-Sailjail]
-Permissions=Calendar
 OrganizationName=org.dollfin
 ApplicationName=Dollfin
