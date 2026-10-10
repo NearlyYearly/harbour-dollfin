@@ -162,6 +162,14 @@ bool Database::migrate(QString *error)
         }
     }
 
+    if (current < 2) {
+        // Stock source: where the supply came from (prescriber, pharmacy, ...).
+        if (!run(QStringLiteral("ALTER TABLE stock ADD COLUMN source TEXT"), error)) {
+            m_db.rollback();
+            return false;
+        }
+    }
+
     QSqlQuery stamp(m_db);
     stamp.prepare(QStringLiteral("INSERT INTO schema_version (version, applied_at) VALUES (?, ?)"));
     stamp.addBindValue(SchemaVersion);

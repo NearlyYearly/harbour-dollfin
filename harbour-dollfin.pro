@@ -32,6 +32,7 @@ DISTFILES += \
     qml/pages/TodayPage.qml \
     qml/pages/MedicationsPage.qml \
     qml/pages/MedicationEditPage.qml \
+    qml/pages/StockPage.qml \
     qml/pages/RegimensPage.qml \
     qml/pages/RegimenEditPage.qml \
     qml/pages/HistoryPage.qml \

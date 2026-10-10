@@ -63,11 +63,23 @@ public:
     Q_INVOKABLE QString exportIcs();
     Q_INVOKABLE bool openInCalendar(const QString &path);
 
+    // Stock (P5).
+    Q_INVOKABLE bool saveStock(int medicationId, double quantity, const QString &unit,
+                               double lowThreshold, const QString &source, const QString &expires);
+
+    // Backup (P6).
+    Q_INVOKABLE QString backupPath() const;
+    Q_INVOKABLE QString exportBackup();
+    Q_INVOKABLE bool importBackup(const QString &path);
+
 signals:
     void changed();
     void settingsChanged();
 
 private:
+    QVariantMap medicationMap(const Medication &medication) const;
+    void adjustStock(qint64 medicationId, double delta);
+
     Database m_database;
     Store m_store;
     QSettings m_settings;

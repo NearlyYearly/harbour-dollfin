@@ -86,17 +86,19 @@ Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the a
 
 ## P5 — Stock
 
-- [ ] Stock table UI (quantity, unit, low threshold, expiry)
-- [ ] Auto-decrement on intake; correct on edit/delete
-- [ ] Low-stock warning (in-app + optional notification)
-- [ ] Unit tests for stock arithmetic
+- [x] Stock editor per medication (quantity, unit, low threshold, expiry, **source**)
+- [x] Migration to schema v2 (adds `stock.source`)
+- [x] Auto-decrement on a taken dose; restore on undo/delete
+- [x] Low-stock flag (`quantity <= lowThreshold`) shown in the medications list
+- [x] Unit tests for stock + backup (89 checks)
+- [ ] Optional low-stock *notification* (currently in-app only)
 
 ## P6 — Backup, file access & i18n
 
-- [ ] JSON export of all data to a user-chosen file
-- [ ] JSON import with validation and merge/replace choice
-- [ ] Add the minimal sailjail permission for file access (D-013)
-- [ ] Test export/import round-trip
+- [x] JSON export of all data (generic table dump, future-proof)
+- [x] JSON import (replace-all, in a transaction, validated)
+- [x] File access via the `Downloads` sailjail permission (D-013)
+- [x] Export/import round-trip test
 - [ ] Translate the UI to Dutch (`nl`) and Norwegian Bokmål (`nb`)
 
 ## P7 — Polish

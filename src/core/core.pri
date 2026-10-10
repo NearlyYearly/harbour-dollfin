@@ -5,9 +5,11 @@ HEADERS += \
     $$PWD/database.h \
     $$PWD/store.h \
     $$PWD/scheduleengine.h \
-    $$PWD/ical.h
+    $$PWD/ical.h \
+    $$PWD/backup.h
 SOURCES += \
     $$PWD/database.cpp \
     $$PWD/store.cpp \
     $$PWD/scheduleengine.cpp \
-    $$PWD/ical.cpp
+    $$PWD/ical.cpp \
+    $$PWD/backup.cpp

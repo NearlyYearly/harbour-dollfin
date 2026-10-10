@@ -5,6 +5,7 @@
 // Sailfish target). Run with scripts/run-tests.sh, or from an SDK build shell:
 //   cd tests/tst_core && qmake && make && ./tst_core
 
+#include "core/backup.h"
 #include "core/database.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
@@ -79,13 +80,13 @@ static void testSchemaAndMigration()
     if (!openOk)
         std::fprintf(stderr, "open failed: %s\n", error.toUtf8().constData());
     CHECK(openOk);
-    CHECK_EQ(db.schemaVersion(), 1);
+    CHECK_EQ(db.schemaVersion(), 2);
 
     // Re-opening an existing database must not re-run migrations.
     db.close();
     Database db2;
     CHECK(db2.open(dir.path() + "/schema.db", &error));
-    CHECK_EQ(db2.schemaVersion(), 1);
+    CHECK_EQ(db2.schemaVersion(), 2);
 }
 
 static void testMedicationCrud()
@@ -356,6 +357,76 @@ static void testIcalBuilder()
     CHECK(calendar.endsWith(QStringLiteral("END:VCALENDAR\r\n")));
 }
 
+static void testStockAndBackup()
+{
+    QTemporaryDir dir;
+    Database db;
+    CHECK(db.open(dir.path() + "/backup.db"));
+    Store store(db);
+
+    Medication m;
+    m.name = QStringLiteral("Testosterone gel");
+    m.form = QStringLiteral("Gel");
+    m.strength = 16.2;
+    m.unit = QStringLiteral("mg");
+    CHECK(store.addMedication(m));
+
+    Regimen r;
+    r.medicationId = m.id;
+    r.times = QList<QTime>() << QTime(8, 0);
+    r.startDate = med("2026-01-01");
+    CHECK(store.addRegimen(r));
+
+    Intake i;
+    i.medicationId = m.id;
+    i.regimenId = r.id;
+    i.takenAt = utc("2026-02-01T08:00");
+    i.status = QStringLiteral("taken");
+    CHECK(store.addIntake(i));
+
+    Stock stock;
+    stock.medicationId = m.id;
+    stock.quantity = 10;
+    stock.unit = QStringLiteral("doses");
+    stock.lowThreshold = 2;
+    stock.source = QStringLiteral("Pharmacy");
+    CHECK(store.setStock(stock));
+
+    bool ok = false;
+    const Stock readBack = store.stock(m.id, &ok);
+    CHECK(ok);
+    CHECK_EQ(readBack.quantity, 10.0);
+    CHECK(readBack.source == QStringLiteral("Pharmacy"));
+
+    // Export, then import into a fresh database — everything must round-trip.
+    const QString json = Backup::toJson(db);
+    CHECK(json.contains(QStringLiteral("dollfin-backup")));
+    CHECK(json.contains(QStringLiteral("Pharmacy")));
+
+    Database restored;
+    CHECK(restored.open(dir.path() + "/restored.db"));
+    QString error;
+    const bool imported = Backup::fromJson(restored, json, &error);
+    if (!imported)
+        std::fprintf(stderr, "import error: %s\n", error.toUtf8().constData());
+    CHECK(imported);
+
+    Store restoredStore(restored);
+    CHECK_EQ(restoredStore.medications().size(), 1);
+    CHECK_EQ(restoredStore.regimens().size(), 1);
+    CHECK_EQ(restoredStore.intakes().size(), 1);
+    const QList<Medication> meds = restoredStore.medications();
+    if (!meds.isEmpty()) {
+        const Stock restoredStock = restoredStore.stock(meds.first().id, &ok);
+        CHECK(ok);
+        CHECK_EQ(restoredStock.quantity, 10.0);
+        CHECK(restoredStock.source == QStringLiteral("Pharmacy"));
+    }
+
+    // Importing a non-backup must be refused.
+    CHECK(!Backup::fromJson(restored, QStringLiteral("{}"), &error));
+}
+
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
@@ -374,6 +445,7 @@ int main(int argc, char **argv)
     testScheduleDst();
     testFirstOccurrenceAfter();
     testIcalBuilder();
+    testStockAndBackup();
 
     std::fprintf(stderr, "%d checks, %d failure(s)\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;

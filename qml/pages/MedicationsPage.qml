@@ -37,6 +37,11 @@ Page {
                                               { medicationId: modelData.id })
                 }
                 MenuItem {
+                    text: qsTr("Stock")
+                    onClicked: pageStack.push(Qt.resolvedUrl("StockPage.qml"),
+                                              { medicationId: modelData.id })
+                }
+                MenuItem {
                     text: qsTr("Delete")
                     onClicked: Remorse.itemAction(delegate, qsTr("Deleting"),
                                                function() { app.removeMedication(modelData.id) })
@@ -61,6 +66,15 @@ Page {
                     visible: text.length > 0
                     text: modelData.detail
                     color: Theme.secondaryColor
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    truncationMode: TruncationMode.Fade
+                }
+                Label {
+                    width: parent.width
+                    visible: modelData.hasStock
+                    text: modelData.quantity + " " + modelData.stockUnit
+                          + (modelData.isLow ? " · " + qsTr("low") : "")
+                    color: modelData.isLow ? Theme.errorColor : Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeExtraSmall
                     truncationMode: TruncationMode.Fade
                 }

@@ -55,6 +55,7 @@ struct Stock {
     double lowThreshold = 0.0;
     QDate lastRefill;
     QDate expires;
+    QString source; // prescriber, pharmacy, ...
 };
 
 struct Level {

@@ -3,6 +3,7 @@
 
 #include "appcontroller.h"
 
+#include "core/backup.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
 
@@ -154,7 +155,7 @@ QVariantList AppController::medications() const
     QVariantList list;
     const QList<Medication> meds = m_store.medications();
     for (const Medication &m : meds)
-        list.append(medicationToMap(m));
+        list.append(medicationMap(m));
     return list;
 }
 
@@ -244,7 +245,24 @@ QString AppController::todayLabel() const
 
 QVariantMap AppController::medication(int id) const
 {
-    return medicationToMap(m_store.medication(id));
+    return medicationMap(m_store.medication(id));
+}
+
+QVariantMap AppController::medicationMap(const Medication &medication) const
+{
+    QVariantMap map = medicationToMap(medication);
+    bool hasStock = false;
+    const Stock stock = m_store.stock(medication.id, &hasStock);
+    map[QStringLiteral("hasStock")] = hasStock;
+    map[QStringLiteral("quantity")] = stock.quantity;
+    map[QStringLiteral("stockUnit")] = stock.unit;
+    map[QStringLiteral("lowThreshold")] = stock.lowThreshold;
+    map[QStringLiteral("source")] = stock.source;
+    map[QStringLiteral("expires")] = stock.expires.isValid() ? stock.expires.toString(Qt::ISODate)
+                                                              : QString();
+    map[QStringLiteral("isLow")] = hasStock && stock.lowThreshold > 0
+                                    && stock.quantity <= stock.lowThreshold;
+    return map;
 }
 
 QVariantMap AppController::regimen(int id) const
@@ -332,9 +350,14 @@ bool AppController::logDose(int regimenId, int medicationId,
                 == scheduled.toUTC().toMSecsSinceEpoch() / 1000) {
             Intake updated = existing;
             updated.status = status;
+            const bool wasTaken = existing.status == QStringLiteral("taken");
+            const bool nowTaken = status == QStringLiteral("taken");
             const bool ok = m_store.updateIntake(updated);
-            if (ok)
+            if (ok) {
+                if (wasTaken != nowTaken)
+                    adjustStock(medicationId, wasTaken ? 1.0 : -1.0);
                 emit changed();
+            }
             return ok;
         }
     }
@@ -348,8 +371,11 @@ bool AppController::logDose(int regimenId, int medicationId,
     intake.unit = med.unit;
     intake.status = status;
     const bool ok = m_store.addIntake(intake);
-    if (ok)
+    if (ok) {
+        if (status == QStringLiteral("taken"))
+            adjustStock(medicationId, -1.0);
         emit changed();
+    }
     return ok;
 }
 
@@ -360,10 +386,86 @@ bool AppController::clearIntake(int intakeId)
 
 bool AppController::removeIntake(int intakeId)
 {
+    const QList<Intake> all = m_store.intakes();
+    for (const Intake &intake : all) {
+        if (intake.id == intakeId) {
+            if (intake.status == QStringLiteral("taken"))
+                adjustStock(intake.medicationId, 1.0);
+            break;
+        }
+    }
+
     const bool ok = m_store.removeIntake(intakeId);
     if (ok)
         emit changed();
     return ok;
+}
+
+void AppController::adjustStock(qint64 medicationId, double delta)
+{
+    bool hasStock = false;
+    Stock stock = m_store.stock(medicationId, &hasStock);
+    if (!hasStock)
+        return; // not tracking stock for this medication
+    stock.quantity = qMax(0.0, stock.quantity + delta);
+    m_store.setStock(stock);
+}
+
+bool AppController::saveStock(int medicationId, double quantity, const QString &unit,
+                              double lowThreshold, const QString &source, const QString &expires)
+{
+    Stock stock;
+    stock.medicationId = medicationId;
+    stock.quantity = quantity;
+    stock.unit = unit;
+    stock.lowThreshold = lowThreshold;
+    stock.source = source;
+    stock.expires = expires.isEmpty() ? QDate() : QDate::fromString(expires, Qt::ISODate);
+    const bool ok = m_store.setStock(stock);
+    if (ok)
+        emit changed();
+    return ok;
+}
+
+QString AppController::backupPath() const
+{
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
+    return dir.isEmpty() ? QString() : dir + QStringLiteral("/dollfin-backup.json");
+}
+
+QString AppController::exportBackup()
+{
+    const QString json = Backup::toJson(m_database);
+    const QString path = backupPath();
+    if (path.isEmpty())
+        return QString();
+    QDir().mkpath(QFileInfo(path).absolutePath());
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        return QString();
+    file.write(json.toUtf8());
+    file.close();
+    return path;
+}
+
+bool AppController::importBackup(const QString &path)
+{
+    const QString target = path.isEmpty() ? backupPath() : path;
+    if (target.isEmpty())
+        return false;
+    QFile file(target);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+    const QString json = QString::fromUtf8(file.readAll());
+    file.close();
+
+    QString error;
+    if (!Backup::fromJson(m_database, json, &error)) {
+        qWarning() << "dollfin: backup import failed:" << error;
+        return false;
+    }
+    emit changed();
+    return true;
 }
 
 // --- Reminders -------------------------------------------------------------

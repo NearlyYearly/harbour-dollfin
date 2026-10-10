@@ -391,13 +391,14 @@ bool Store::setStock(const Stock &stock, QString *error)
     QSqlQuery query(m_database.handle());
     query.prepare(QStringLiteral(
         "INSERT OR REPLACE INTO stock (medication_id, quantity, unit, low_threshold, last_refill,"
-        " expires) VALUES (?,?,?,?,?,?)"));
+        " expires, source) VALUES (?,?,?,?,?,?,?)"));
     query.addBindValue(stock.medicationId);
     query.addBindValue(stock.quantity);
     query.addBindValue(textOrNull(stock.unit));
     query.addBindValue(stock.lowThreshold);
     query.addBindValue(dateOrNull(stock.lastRefill));
     query.addBindValue(dateOrNull(stock.expires));
+    query.addBindValue(textOrNull(stock.source));
     return exec(query, error);
 }
 
@@ -406,7 +407,7 @@ Stock Store::stock(qint64 medicationId, bool *ok) const
     Stock stock;
     QSqlQuery query(m_database.handle());
     query.prepare(QStringLiteral(
-        "SELECT medication_id, quantity, unit, low_threshold, last_refill, expires"
+        "SELECT medication_id, quantity, unit, low_threshold, last_refill, expires, source"
         " FROM stock WHERE medication_id=?"));
     query.addBindValue(medicationId);
     const bool found = query.exec() && query.next();
@@ -417,6 +418,7 @@ Stock Store::stock(qint64 medicationId, bool *ok) const
         stock.lowThreshold = query.value(3).toDouble();
         stock.lastRefill = QDate::fromString(query.value(4).toString(), Qt::ISODate);
         stock.expires = QDate::fromString(query.value(5).toString(), Qt::ISODate);
+        stock.source = query.value(6).toString();
     }
     if (ok)
         *ok = found;

@@ -85,6 +85,34 @@ Page {
                 text: page.lastResult
             }
 
+            SectionHeader { text: qsTr("Backup") }
+
+            Button {
+                x: Theme.horizontalPageMargin
+                text: qsTr("Export backup")
+                onClicked: {
+                    var path = app.exportBackup()
+                    page.lastResult = path.length > 0
+                        ? qsTr("Backup saved to %1").arg(path)
+                        : qsTr("Could not write the backup.")
+                }
+            }
+
+            Button {
+                x: Theme.horizontalPageMargin
+                text: qsTr("Import backup")
+                onClicked: importDialog.open()
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: qsTr("Backups are written to %1 as JSON. To restore, put a backup file there and import.").arg(app.backupPath())
+            }
+
             SectionHeader { text: qsTr("About") }
 
             Label {
@@ -155,6 +183,34 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeSmall
                 text: qsTr("The .ics file is saved. Import it into a calendar now?")
+            }
+        }
+    }
+
+    Dialog {
+        id: importDialog
+
+        onAccepted: {
+            page.lastResult = app.importBackup("")
+                ? qsTr("Backup imported.")
+                : qsTr("Import failed. Is there a backup file?")
+        }
+
+        Column {
+            width: parent.width
+            spacing: Theme.paddingMedium
+
+            DialogHeader {
+                dialog: importDialog
+                title: qsTr("Import backup?")
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
+                wrapMode: Text.WordWrap
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("This replaces everything currently in Dollfin with the contents of the backup file.")
             }
         }
     }
