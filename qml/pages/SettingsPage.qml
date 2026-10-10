@@ -118,6 +118,14 @@ Page {
             Label {
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2 * Theme.horizontalPageMargin
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                text: qsTr("Dollfin %1").arg(Qt.application.version)
+            }
+
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2 * Theme.horizontalPageMargin
                 wrapMode: Text.WordWrap
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeSmall

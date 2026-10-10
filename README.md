@@ -51,6 +51,12 @@ Uses podman and a Sailfish Platform SDK container; no SDK install required. See
 - **JSON backup** export/import
 - English, Dutch and Norwegian Bokmål
 
+## Screenshots
+
+| Today | New medication | Schedule | History |
+|-------|----------------|----------|---------|
+| ![Today](assets/screenshots/today.png) | ![New medication](assets/screenshots/new-medication.png) | ![Schedule](assets/screenshots/schedule.png) | ![History](assets/screenshots/history.png) |
+
 ## Documentation
 
 - [`AGENTS.md`](AGENTS.md) — working instructions, conventions, definition of done

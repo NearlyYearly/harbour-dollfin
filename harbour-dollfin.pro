@@ -13,6 +13,10 @@ TARGET = harbour-dollfin
 
 CONFIG += sailfishapp
 
+# Release build: no debug symbols in the packaged binary.
+QMAKE_CXXFLAGS_RELEASE += -g0
+QMAKE_LFLAGS_RELEASE += -s
+
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 172x172
 
 QT += dbus

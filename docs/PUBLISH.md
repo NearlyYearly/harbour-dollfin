@@ -46,6 +46,9 @@ Publish the public key so people can verify: `gpg --armor --export <id>`.
 3. Upload the `.rpm` for `aarch64`.
 4. Paste the description below, add screenshots, and a changelog.
 
+Screenshots are in `assets/screenshots/`: `today.png`, `new-medication.png`,
+`schedule.png`, `history.png` (1032x2272, from a Jolla Phone 2026).
+
 ### Summary
 
 ```
