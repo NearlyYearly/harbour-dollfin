@@ -22,8 +22,8 @@ routes (oral, sublingual, gel, patch, injection). They need to:
 
 ### v0.1 — reliable core (MVP)
 
-- Medications and **regimens**: medication, dose, route, times of day, day interval,
-  start/end date, active flag.
+- Medications and **regimens**: medication (**free-text name**, no built-in catalog — D-017),
+  dose, route, times of day, day interval, start/end date, active flag.
 - **Today** screen: due/upcoming doses, one-tap *taken* / *skipped*, countdown to next dose.
 - **Reminders**: reliable dose alarms via the OS calendar/`timed` — the app writes repeating
   events into a dedicated **local** calendar (or exports `.ics`) rather than relying on a
@@ -50,6 +50,13 @@ routes (oral, sublingual, gel, patch, injection). They need to:
 Cloud sync, accounts, social features, ads, telemetry, dosing or medical advice,
 diagnosis, pregnancy tracking.
 
+### How dollfin differs from mona
+
+- **Custom medications (D-017).** Any medication can be entered as free text; mona restricts
+  you to a predefined list.
+- Reminders ride on the OS **local calendar / `timed`** rather than a background service.
+- Fully offline by design: no `Internet` permission at all.
+
 ## Architecture
 
 ```
@@ -69,7 +76,7 @@ SQLite (QtSql / QSQLITE)
 
 | Table | Key fields |
 |-------|-----------|
-| `medication` | id, name, form, strength, unit, notes, active |
+| `medication` | id, name (free text), form, strength, unit, notes, active |
 | `regimen` | id, medication_id, dose, route, times(json), interval_days, start, end, active |
 | `intake` | id, regimen_id, scheduled_at, taken_at, status(taken/skipped/missed), amount, site, notes |
 | `stock` | medication_id, quantity, unit, low_threshold, last_refill, expires |

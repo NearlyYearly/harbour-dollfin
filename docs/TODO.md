@@ -5,9 +5,7 @@ New tasks go in the phase they belong to.
 
 ## Now
 
-- [ ] `git init` and first commit of the planning docs
-- [ ] Install the Sailfish SDK
-- [ ] Start P1
+- [ ] P2 — data layer (schema, models, schedule engine, tests)
 
 ## P0 — Research & decisions
 
@@ -20,6 +18,7 @@ New tasks go in the phase they belong to.
 - [x] Application-site tracking and all-analyte graphs deferred (D-015)
 - [x] Qt 5.6/Silica on Storeman, Keel-grade code (D-002)
 - [x] Local-calendar reminders + `.ics` fallback (D-006)
+- [x] Free-text custom medications, no built-in catalog (D-017)
 
 ## P1 — Skeleton
 
@@ -33,15 +32,15 @@ New tasks go in the phase they belong to.
 - [x] `LICENSE` (GPL-3.0-or-later)
 - [x] Build the RPM in the Platform SDK container (`scripts/build-rpm.sh`, 0 rpmlint errors)
 - [x] Reconcile the scaffold with the official `sfdk init` template (files copied from the SDK source)
-- [ ] Install the full Sailfish SDK for the emulator / `sfdk deploy` (optional, `docs/BUILD.md`)
-- [ ] Deploy to the Jolla Phone 2026 and verify it launches from the app grid
-      (`scripts/deploy-device.sh`; enable Developer mode + Remote connection first)
-- [ ] Verify the cover renders
-- [ ] Note the Keel porting guide so new code stays Keel-grade (D-002)
+- [x] Deploy to the Jolla Phone 2026; app launches from the app grid (`scripts/deploy-device.sh`)
+- [x] Cover renders
+- [x] Note the Keel porting guide so new code stays Keel-grade (D-002)
+- [ ] (optional) Install the full Sailfish SDK for the emulator / `sfdk deploy` (`docs/BUILD.md`)
 
 ## P2 — Data layer
 
 - [ ] Create the SQLite schema (medication, regimen, intake, stock, level, schema_version)
+- [ ] Medication name is **free text** with optional form/strength/unit fields (D-017)
 - [ ] Implement connection + `schema_version` migration runner
 - [ ] Medication model (CRUD)
 - [ ] Regimen model with schedule expansion (times + interval)
@@ -53,7 +52,7 @@ New tasks go in the phase they belong to.
 ## P3 — Core UI
 
 - [ ] Medications list page + empty state
-- [ ] Add/edit medication page
+- [ ] Add/edit medication page: free-text name, optional quick-pick of common meds (D-017)
 - [ ] Add/edit regimen page (dose, route, times, interval, dates)
 - [ ] Today page: due/upcoming doses, taken/skipped actions, next-dose countdown
 - [ ] History page: list of intakes with edit

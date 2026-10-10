@@ -180,6 +180,21 @@ Template:
 
 ---
 
+### D-017 — Custom medications (free text, no built-in catalog)
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** HRT regimens vary widely and include compounded or uncommon preparations. The
+  reference app (mona) only allows a predefined list, which locks people out. Every user must
+  be able to track exactly what they take.
+- **Decision:** Medication entry is **free text**. v1 ships **no bundled medication catalog**.
+  A medication is a name plus optional form, strength, unit and notes. A small optional
+  quick-pick of common names may be added later as a convenience, but custom entry is always
+  available and never hidden.
+- **Consequences:** One of our differences from mona. Nothing to maintain, translate or go
+  stale, and no implied dosing advice. If a quick-pick is added it must not gate or replace
+  free-text entry.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

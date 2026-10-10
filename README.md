@@ -15,6 +15,8 @@ Status: **planning / pre-alpha** (no app code yet).
   treated as critical code.
 - **Simple.** Smallest version that does the core job. No accounts, no sync, no telemetry,
   no dosing advice.
+- **Yours, whatever you take.** Medication names are free text — no fixed drug list, so
+  compounded or unusual preparations work too.
 - **Open.** Free and open source, no subscriptions or premium tiers.
 
 ## Target
