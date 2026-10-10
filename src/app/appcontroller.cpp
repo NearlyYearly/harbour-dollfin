@@ -138,9 +138,12 @@ bool callCalendarUi(const QString &method, const QVariantList &arguments)
 
 } // namespace
 
-AppController::AppController(QObject *parent)
+AppController::AppController(const QString &settingsFile, QObject *parent)
     : QObject(parent)
     , m_store(m_database)
+    // Explicit ini in the app's private data dir: the sandbox config location
+    // is not a reliable place to persist to.
+    , m_settings(settingsFile, QSettings::IniFormat)
 {
 }
 

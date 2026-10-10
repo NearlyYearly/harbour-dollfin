@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(dollfinMessageHandler);
     qInfo() << "dollfin: data dir" << dataDir;
 
-    dollfin::AppController controller;
+    dollfin::AppController controller(dataDir + QStringLiteral("/settings.ini"));
     QString error;
     if (!controller.initialize(dataDir + QStringLiteral("/dollfin.db"), &error))
         qWarning() << "dollfin: failed to open database:" << error;

@@ -28,7 +28,7 @@ class AppController : public QObject
     Q_PROPERTY(bool remindersConsent READ remindersConsent NOTIFY settingsChanged)
 
 public:
-    explicit AppController(QObject *parent = nullptr);
+    explicit AppController(const QString &settingsFile, QObject *parent = nullptr);
 
     bool initialize(const QString &databasePath, QString *error = nullptr);
 
