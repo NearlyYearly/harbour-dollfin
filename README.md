@@ -2,10 +2,10 @@
 
 A native, local-first medication tracker for trans people, built for **Sailfish OS**.
 
-Track what to take, when, whether you took it, what's left, and how your levels trend —
-all on-device, no account, no cloud, no network.
+Track what to take, when, whether you took it, and what's left. All on-device, no account,
+no cloud, no network.
 
-Status: **planning / pre-alpha** (no app code yet).
+Status: **v1.0** (Sailfish OS 5.x, aarch64).
 
 ## Principles
 
