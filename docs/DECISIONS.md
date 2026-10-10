@@ -230,6 +230,31 @@ Template:
 
 ---
 
+### D-020 — Calendar reminders are opt-in, with a sync warning
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Handing a dose event to the Calendar means it lands in whatever notebook the
+  user picks; if that notebook is a synced CalDAV/Google account, medication names upload to a
+  server. This is the one place dollfin's local-only promise can leak.
+- **Decision:** Calendar reminders are **opt-in**. Before the first import the app explains,
+  in plain language, that the chosen calendar may sync to a cloud, and recommends a local one.
+  Nothing is imported without explicit consent. Declining leaves the app fully usable; manual
+  `.ics` export stays available.
+- **Consequences:** Need a consent screen/flag and honest wording. The user, not the app,
+  chooses the notebook, so responsibility is shared and visible.
+
+### D-021 — Reminder event defaults
+- **Date:** 2026-10-10 · **Status:** Accepted
+- **Context:** Probe feedback: a 15-minute event with a pre-alarm is unnecessary, and a
+  before-the-event alarm can be missed if the import takes a while.
+- **Decision:** Generate a **1-minute** event (`DURATION:PT1M`) starting at the dose time, with
+  the alarm **at the event start** (`TRIGGER:PT0S`). The description carries a plain hint to
+  open Dollfin. No clickable link is possible: the Calendar app renders descriptions as plain
+  text and exposes no URL field (only `location` is clickable).
+- **Consequences:** Once the event is in the calendar, delivery is the OS's job. Logging a dose
+  is a separate manual action in Dollfin.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

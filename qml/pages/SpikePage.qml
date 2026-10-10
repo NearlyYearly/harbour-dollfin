@@ -31,10 +31,11 @@ Page {
         return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//dollfin//spike//EN\r\n"
             + "BEGIN:VEVENT\r\nUID:dollfin-probe@dollfin.local\r\n"
             + "DTSTAMP:" + icalUtc(new Date()) + "\r\n"
-            + "DTSTART:" + icalLocal(start) + "\r\nDURATION:PT15M\r\n"
+            + "DTSTART:" + icalLocal(start) + "\r\nDURATION:PT1M\r\n"
             + "RRULE:FREQ=DAILY;INTERVAL=2\r\n"
-            + "SUMMARY:Dollfin probe dose\r\n"
-            + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Dollfin probe dose\r\nTRIGGER:-PT1M\r\nEND:VALARM\r\n"
+            + "SUMMARY:Dollfin: test dose\r\n"
+            + "DESCRIPTION:Open Dollfin to log this dose.\r\n"
+            + "BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Dollfin: test dose\r\nTRIGGER:PT0S\r\nEND:VALARM\r\n"
             + "END:VEVENT\r\nEND:VCALENDAR\r\n"
     }
 
@@ -70,7 +71,7 @@ Page {
             Button {
                 text: "Open Calendar import (every 2 days)"
                 onClicked: {
-                    var ics = buildIcs(3)
+                    var ics = buildIcs(2)
                     append("calling com.jolla.calendar.ui.importIcsData (" + ics.length + " bytes)")
                     calendarUi.call("importIcsData", [ics],
                         function() { append("importIcsData: call returned") },

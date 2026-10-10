@@ -38,6 +38,27 @@ Consequences for the design:
 
 Probe v2 (`SpikePage.qml`) tests `importIcsData` from the sandboxed app.
 
+### Probe v2 result — works
+
+Confirmed on the Jolla Phone 2026 / 5.2.0.18: tapping the button opened the Calendar import
+screen with the Dollfin event, and it could be saved to a calendar. The reminder design is
+settled (D-019).
+
+### Event rendering constraint
+
+The Calendar app renders an event's description as `plainText` and exposes no `URL` field
+(`Sailfish/Calendar/CalendarEventView.qml`), and only `location` is clickable (opens a map).
+So we **cannot** put a clickable "open Dollfin / mark as taken" link inside the event. Logging
+stays manual; the description can only carry a plain hint.
+
+### Chosen event defaults
+
+- `DURATION:PT1M` — a 1-minute event at the dose time (was 15 minutes).
+- Alarm `TRIGGER:PT0S` — fire at the event start, not before. A pre-alarm can be skipped if
+  the user takes longer than that between generating and confirming the import.
+- `SUMMARY`/`DESCRIPTION` carry a plain "Open Dollfin to log this dose" hint.
+- `UID` is stable per regimen (`dollfin-<regimenId>@dollfin`), so re-importing updates it.
+
 ## Original findings (still valid)
 
 - `timed` **is running**: `/usr/bin/timed --systemd`. Calendar alarms and Clock alarms both
