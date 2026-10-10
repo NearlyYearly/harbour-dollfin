@@ -67,6 +67,13 @@ Uses podman and a Sailfish Platform SDK container; no SDK install required. See
 - [`docs/TODO.md`](docs/TODO.md) — ordered task list
 - [`docs/DECISIONS.md`](docs/DECISIONS.md) — decision log and open questions
 
+## AI assistance
+
+This project is built with heavy use of AI coding assistance. Every change was reviewed,
+tested and accepted by the human maintainer, and the reasoning behind each decision is
+recorded in [`docs/DECISIONS.md`](docs/DECISIONS.md). Nothing is hidden: the decision log and
+the git history are the record of how this was built.
+
 ## License
 
 GPL-3.0-or-later (see `docs/DECISIONS.md` D-008). A `LICENSE` file is added before release.
