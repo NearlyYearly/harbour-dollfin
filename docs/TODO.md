@@ -5,8 +5,9 @@ New tasks go in the phase they belong to.
 
 ## Now
 
-- [ ] **Reminder spike before P2** — protocol in `spikes/reminders/`
+- [x] Reminder spike — done, `spikes/reminders/` (D-019)
 - [ ] P2 — data layer (schema, models, schedule engine, tests)
+- [ ] Fold the confirmed reminder design into P4 (see below)
 
 ## P0 — Research & decisions
 
@@ -62,25 +63,21 @@ New tasks go in the phase they belong to.
 - [ ] Error and empty states for every page
 - [ ] All strings wrapped in `qsTr()`
 
-## P4 — Reminders (highest risk)
+## P4 — Reminders
 
-> The spike in `spikes/reminders/` runs **before P2**, not here. Its result picks the path
-> below and updates D-006/D-013 first.
+Spike done (`spikes/reminders/FINDINGS.md`, D-019/D-020/D-021). Mechanism: the app generates
+**iCalendar** and hands it to the Calendar UI via `com.jolla.calendar.ui.importIcsData`;
+`.ics` file export is the fallback. Reminders are opt-in (D-020).
 
-- [ ] **Spike:** write a repeating event into a **local** calendar via
-      `nemo-qml-plugin-calendar` with the `Calendar` permission; confirm the alarm fires when
-      the app is closed, after reboot, and across a DST change
-- [ ] **Spike:** generate an `.ics` file and import it into Sailfish Calendar on 5.2; note how
-      well repeats/updates work
-- [ ] Record the exact file permission chosen for `.ics` export/backup as an update to D-013
-- [ ] Implement `ReminderService` + `ReminderBackend`
-- [ ] Create/maintain a dedicated **local** calendar; refuse or warn on synced calendars
-- [ ] Update calendar events when a regimen or intake changes
-- [ ] `.ics` export as an always-available fallback
-- [ ] “Taken” / “Snooze” actions where the platform allows
-- [ ] Reschedule on boot / timezone change / OS upgrade
-- [ ] Unit tests for event generation; manual test for closed-app delivery
-- [ ] Document any OS limitation to the user in-app
+- [ ] iCalendar builder: VEVENT + VALARM, `RRULE` for daily / every N days / weekly, stable
+      `UID` per regimen, 1-minute duration, alarm at event start (D-021)
+- [ ] Consent screen + persisted setting, warning that the chosen calendar may sync (D-020)
+- [ ] `ReminderService` calling `importIcsData` through `Nemo.DBus`
+- [ ] `.ics` file export (backup / manual import)
+- [ ] Re-import the same `UID` to update; document how to remove events (we cannot delete)
+- [ ] Unit tests for the iCalendar builder
+- [ ] Manual test: alarm fires with the app closed, and after a reboot
+- [ ] Delete the probe page and branch once implemented (the `Calendar` permission stays)
 
 ## P5 — Stock
 

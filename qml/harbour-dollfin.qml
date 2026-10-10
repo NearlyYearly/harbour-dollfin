@@ -6,7 +6,8 @@ import Sailfish.Silica 1.0
 import "pages"
 
 ApplicationWindow {
-    initialPage: Component { TodayPage { } }
+    // spike/reminders branch: temporary probe as the initial page
+    initialPage: Component { SpikePage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: defaultAllowedOrientations
 }
