@@ -34,7 +34,7 @@ Page {
             menu: ContextMenu {
                 MenuItem {
                     text: qsTr("Delete")
-                    onClicked: remorse.execute(delegate, qsTr("Deleting"),
+                    onClicked: Remorse.itemAction(delegate, qsTr("Deleting"),
                                                function() { app.removeIntake(modelData.id) })
                 }
             }
@@ -73,5 +73,4 @@ Page {
         VerticalScrollDecorator {}
     }
 
-    Remorse { id: remorse }
 }
