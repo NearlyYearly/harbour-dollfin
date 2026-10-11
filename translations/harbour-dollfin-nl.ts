@@ -855,6 +855,25 @@
     </message>
 </context>
 <context>
+    <name>ScheduleUpdateDialog</name>
+    <message>
+        <source>Update schedules?</source>
+        <translation>Schema&apos;s bijwerken?</translation>
+    </message>
+    <message>
+        <source>Now</source>
+        <translation>Nu</translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation>Later</translation>
+    </message>
+    <message>
+        <source>The form changed. Check this medication&apos;s schedules, for example the amount per dose.</source>
+        <translation>De vorm is gewijzigd. Controleer de schema&apos;s van deze medicatie, bijvoorbeeld de hoeveelheid per dosis.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsPage</name>
     <message>
         <source>Settings</source>

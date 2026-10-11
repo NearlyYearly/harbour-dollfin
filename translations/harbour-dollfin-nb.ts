@@ -855,6 +855,25 @@
     </message>
 </context>
 <context>
+    <name>ScheduleUpdateDialog</name>
+    <message>
+        <source>Update schedules?</source>
+        <translation>Oppdatere tidsplaner?</translation>
+    </message>
+    <message>
+        <source>Now</source>
+        <translation>Nå</translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation>Senere</translation>
+    </message>
+    <message>
+        <source>The form changed. Check this medication&apos;s schedules, for example the amount per dose.</source>
+        <translation>Formen er endret. Sjekk tidsplanene for denne medisinen, for eksempel mengden per dose.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsPage</name>
     <message>
         <source>Settings</source>

@@ -173,7 +173,9 @@ One analyte, one unit at a time (D-026/D-028). No chart dependency: QML `Canvas`
 - [x] Schedule page: "Pills/Patches/Sprays per dose" field, only for countable forms
 - [x] Count stored in `regimen.dose`, shown in the dose text, multiplies the logged amount
 - [x] Unit test: dose round-trip, `unitsPerDose` default
-- [ ] Device test: pill schedule with 2 and 0.5, gel schedule shows no field
+- [x] Form change on a medication with schedules asks to update them (Now / Later)
+- [ ] Device test: pill schedule with 2 and 0.5, gel schedule shows no field,
+      Pill -> Gel shows the dialog; Now opens the schedule, Later returns to the list
 - [ ] Decide whether stock decrements by units per dose when the stock unit is a unit
       (tablets/patches) rather than doses (D-023)
 

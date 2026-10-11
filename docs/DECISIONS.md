@@ -463,6 +463,9 @@ Template:
   language falls back to "no count field" (same limitation as the medication page's method
   combo). Stock still decrements **one per taken dose** (D-023) — not changed here, since the
   stock unit may be "doses" rather than units.
+- **Follow-up:** Changing a medication's form while it has schedules opens an "Update
+  schedules?" dialog (Now / Later). Now opens the schedule (or the list when there are
+  several); Later leaves them as they are. The stale count is never changed silently.
 
 ---
 
