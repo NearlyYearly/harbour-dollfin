@@ -360,6 +360,66 @@
         <source>150-600</source>
         <translation>150-600</translation>
     </message>
+    <message>
+        <source>Pill</source>
+        <translation>Pille</translation>
+    </message>
+    <message>
+        <source>Gel</source>
+        <translation>Gel</translation>
+    </message>
+    <message>
+        <source>Patch</source>
+        <translation>Plaster</translation>
+    </message>
+    <message>
+        <source>Injection</source>
+        <translation>Injeksjon</translation>
+    </message>
+    <message>
+        <source>Spray</source>
+        <translation>Spray</translation>
+    </message>
+    <message>
+        <source>Implant</source>
+        <translation>Implantat</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Annet</translation>
+    </message>
+    <message>
+        <source>doses</source>
+        <translation>doser</translation>
+    </message>
+    <message>
+        <source>tablets</source>
+        <translation>tabletter</translation>
+    </message>
+    <message>
+        <source>capsules</source>
+        <translation>capsules</translation>
+    </message>
+    <message>
+        <source>patches</source>
+        <translation>plaster</translation>
+    </message>
+    <message>
+        <source>sachets</source>
+        <translation>poser</translation>
+    </message>
+    <message>
+        <source>vials</source>
+        <translation>hetteglass</translation>
+    </message>
+    <message>
+        <source>ml</source>
+        <translation>ml</translation>
+    </message>
+    <message>
+        <source>g</source>
+        <translation>g</translation>
+    </message>
 </context>
 <context>
     <name>HistoryPage</name>
@@ -591,34 +651,6 @@
     <message>
         <source>Medroxyprogesterone acetate</source>
         <translation>Medroxyprogesterone acetate</translation>
-    </message>
-    <message>
-        <source>Pill</source>
-        <translation>Pille</translation>
-    </message>
-    <message>
-        <source>Gel</source>
-        <translation>Gel</translation>
-    </message>
-    <message>
-        <source>Patch</source>
-        <translation>Plaster</translation>
-    </message>
-    <message>
-        <source>Injection</source>
-        <translation>Injeksjon</translation>
-    </message>
-    <message>
-        <source>Spray</source>
-        <translation>Spray</translation>
-    </message>
-    <message>
-        <source>Implant</source>
-        <translation>Implantat</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation>Annet</translation>
     </message>
     <message>
         <source>A name is required</source>
@@ -990,38 +1022,6 @@
 </context>
 <context>
     <name>StockPage</name>
-    <message>
-        <source>doses</source>
-        <translation>doser</translation>
-    </message>
-    <message>
-        <source>tablets</source>
-        <translation>tabletter</translation>
-    </message>
-    <message>
-        <source>capsules</source>
-        <translation>capsules</translation>
-    </message>
-    <message>
-        <source>patches</source>
-        <translation>plaster</translation>
-    </message>
-    <message>
-        <source>sachets</source>
-        <translation>poser</translation>
-    </message>
-    <message>
-        <source>vials</source>
-        <translation>hetteglass</translation>
-    </message>
-    <message>
-        <source>ml</source>
-        <translation>ml</translation>
-    </message>
-    <message>
-        <source>g</source>
-        <translation>g</translation>
-    </message>
     <message>
         <source>Save</source>
         <translation>Lagre</translation>

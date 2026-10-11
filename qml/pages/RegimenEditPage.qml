@@ -19,9 +19,8 @@ Page {
     property var endDate: new Date()
     property int repeatMode: 0 // 0 daily, 1 every N days, 2 weekly
 
-    // Forms that come in countable units, with the label for "how many per dose"
-    // (D-031). The form is stored as the text shown when it was picked, so match
-    // the medication page's translation and the English source.
+    // Forms (stored keys, D-032) that come in countable units, with the label
+    // for "how many per dose" (D-031).
     readonly property var countLabels: [
         { "form": "Pill", "label": qsTr("Pills per dose") },
         { "form": "Patch", "label": qsTr("Patches per dose") },
@@ -29,8 +28,7 @@ Page {
     ]
     readonly property string countLabel: {
         for (var i = 0; i < countLabels.length; i++) {
-            var f = countLabels[i].form
-            if (medicationForm === f || medicationForm === qsTranslate("MedicationEditPage", f))
+            if (medicationForm === countLabels[i].form)
                 return countLabels[i].label
         }
         return ""

@@ -176,6 +176,9 @@ One analyte, one unit at a time (D-026/D-028). No chart dependency: QML `Canvas`
 - [x] Form change on a medication with schedules asks to update them (Now / Later)
 - [ ] Device test: pill schedule with 2 and 0.5, gel schedule shows no field,
       Pill -> Gel shows the dialog; Now opens the schedule, Later returns to the list
+- [x] Forms and stock units stored as keys, migration v3 + backup import (D-032)
+- [ ] Device test: data saved in nl/nb shows the right method, count field and stock unit
+      after switching the UI language
 - [ ] Decide whether stock decrements by units per dose when the stock unit is a unit
       (tablets/patches) rather than doses (D-023)
 

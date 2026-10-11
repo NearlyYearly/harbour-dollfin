@@ -7,6 +7,7 @@
 #include "core/backup.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
+#include "core/vocab.h"
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -31,7 +32,8 @@ QVariantMap medicationToMap(const Medication &m)
     QVariantMap map;
     map[QStringLiteral("id")] = m.id;
     map[QStringLiteral("name")] = m.name;
-    map[QStringLiteral("form")] = m.form;
+    map[QStringLiteral("form")] = m.form; // stable key (D-032)
+    map[QStringLiteral("formLabel")] = Vocab::formLabel(m.form);
     map[QStringLiteral("strength")] = m.strength;
     map[QStringLiteral("unit")] = m.unit;
     map[QStringLiteral("notes")] = m.notes;
@@ -41,8 +43,9 @@ QVariantMap medicationToMap(const Medication &m)
         detail = QString::number(m.strength) + QLatin1Char(' ') + m.unit;
     else
         detail = m.unit;
-    if (!m.form.isEmpty())
-        detail = detail.isEmpty() ? m.form : (m.form + QStringLiteral(" · ") + detail);
+    const QString formLabel = Vocab::formLabel(m.form);
+    if (!formLabel.isEmpty())
+        detail = detail.isEmpty() ? formLabel : (formLabel + QStringLiteral(" · ") + detail);
     map[QStringLiteral("detail")] = detail.trimmed();
     return map;
 }
@@ -88,7 +91,7 @@ QVariantMap regimenToMap(const Regimen &r, const Medication &medication)
         doseText = QString::number(medication.strength) + QLatin1Char(' ') + medication.unit;
     else
         doseText = medication.unit;
-    QString form = medication.form;
+    QString form = Vocab::formLabel(medication.form);
     if (r.dose > 0.0 && r.dose != 1.0) {
         const QString count = QString::number(r.dose) + QStringLiteral(" × ");
         if (!doseText.trimmed().isEmpty())
@@ -318,7 +321,8 @@ QVariantMap AppController::medicationMap(const Medication &medication) const
     const Stock stock = m_store.stock(medication.id, &hasStock);
     map[QStringLiteral("hasStock")] = hasStock;
     map[QStringLiteral("quantity")] = stock.quantity;
-    map[QStringLiteral("stockUnit")] = stock.unit;
+    map[QStringLiteral("stockUnit")] = stock.unit; // stable key (D-032)
+    map[QStringLiteral("stockUnitLabel")] = Vocab::stockUnitLabel(stock.unit);
     map[QStringLiteral("lowThreshold")] = stock.lowThreshold;
     map[QStringLiteral("source")] = stock.source;
     map[QStringLiteral("expires")] = stock.expires.isValid() ? stock.expires.toString(Qt::ISODate)
@@ -339,7 +343,7 @@ bool AppController::saveMedication(const QVariantMap &data)
     Medication m;
     m.id = data.value(QStringLiteral("id"), -1).toLongLong();
     m.name = data.value(QStringLiteral("name")).toString().trimmed();
-    m.form = data.value(QStringLiteral("form")).toString().trimmed();
+    m.form = Vocab::normalizeForm(data.value(QStringLiteral("form")).toString().trimmed());
     m.strength = data.value(QStringLiteral("strength")).toDouble();
     m.unit = data.value(QStringLiteral("unit")).toString().trimmed();
     m.notes = data.value(QStringLiteral("notes")).toString().trimmed();
@@ -480,7 +484,7 @@ bool AppController::saveStock(int medicationId, double quantity, const QString &
     Stock stock;
     stock.medicationId = medicationId;
     stock.quantity = quantity;
-    stock.unit = unit;
+    stock.unit = Vocab::normalizeStockUnit(unit);
     stock.lowThreshold = lowThreshold;
     stock.source = source;
     stock.expires = expires.isEmpty() ? QDate() : QDate::fromString(expires, Qt::ISODate);
@@ -537,6 +541,32 @@ QVariantList AppController::analyteCatalog() const
         map[QStringLiteral("label")] = analyte.label;
         map[QStringLiteral("unit")] = analyte.unit;
         map[QStringLiteral("reference")] = analyte.reference;
+        list.append(map);
+    }
+    return list;
+}
+
+QVariantList AppController::formOptions() const
+{
+    QVariantList list;
+    const QList<VocabEntry> entries = Vocab::forms();
+    for (const VocabEntry &entry : entries) {
+        QVariantMap map;
+        map[QStringLiteral("key")] = entry.key;
+        map[QStringLiteral("label")] = entry.label;
+        list.append(map);
+    }
+    return list;
+}
+
+QVariantList AppController::stockUnitOptions() const
+{
+    QVariantList list;
+    const QList<VocabEntry> entries = Vocab::stockUnits();
+    for (const VocabEntry &entry : entries) {
+        QVariantMap map;
+        map[QStringLiteral("key")] = entry.key;
+        map[QStringLiteral("label")] = entry.label;
         list.append(map);
     }
     return list;
