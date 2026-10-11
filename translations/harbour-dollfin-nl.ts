@@ -771,6 +771,18 @@
         <translation>zo</translation>
     </message>
     <message>
+        <source>Pills per dose</source>
+        <translation>Pillen per dosis</translation>
+    </message>
+    <message>
+        <source>Patches per dose</source>
+        <translation>Pleisters per dosis</translation>
+    </message>
+    <message>
+        <source>Sprays per dose</source>
+        <translation>Sprays per dosis</translation>
+    </message>
+    <message>
         <source>Times</source>
         <translation>Tijden</translation>
     </message>

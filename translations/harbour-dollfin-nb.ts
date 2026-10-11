@@ -771,6 +771,18 @@
         <translation>søn</translation>
     </message>
     <message>
+        <source>Pills per dose</source>
+        <translation>Piller per dose</translation>
+    </message>
+    <message>
+        <source>Patches per dose</source>
+        <translation>Plaster per dose</translation>
+    </message>
+    <message>
+        <source>Sprays per dose</source>
+        <translation>Spray per dose</translation>
+    </message>
+    <message>
         <source>Times</source>
         <translation>Klokkeslett</translation>
     </message>
