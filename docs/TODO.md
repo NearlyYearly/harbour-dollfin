@@ -179,8 +179,10 @@ One analyte, one unit at a time (D-026/D-028). No chart dependency: QML `Canvas`
 - [x] Forms and stock units stored as keys, migration v3 + backup import (D-032)
 - [ ] Device test: data saved in nl/nb shows the right method, count field and stock unit
       after switching the UI language
-- [ ] Decide whether stock decrements by units per dose when the stock unit is a unit
-      (tablets/patches) rather than doses (D-023)
+- [x] Stock takes off units per dose unless counted in doses; `intake.stock_delta` makes
+      undo exact (D-033)
+- [ ] Device test: 2-pill schedule with stock in tablets: take (-2), skip (+2), delete (+2);
+      stock in doses takes 1
 
 ## Backlog (post-v1)
 

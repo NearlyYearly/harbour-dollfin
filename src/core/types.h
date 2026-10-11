@@ -52,6 +52,7 @@ struct Intake {
     QString status;        // "taken" | "skipped"
     QString site;          // application site (backlog, D-015)
     QString notes;
+    double stockDelta = -1.0; // taken off stock when logged; -1 = unknown (before D-033)
 };
 
 struct Stock {

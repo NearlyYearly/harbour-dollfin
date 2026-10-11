@@ -72,6 +72,18 @@ bool Database::run(const QString &sql, QString *error)
     return true;
 }
 
+bool Database::hasColumn(const QString &table, const QString &column) const
+{
+    QSqlQuery query(m_db);
+    if (!query.exec(QStringLiteral("PRAGMA table_info(%1)").arg(table)))
+        return false;
+    while (query.next()) {
+        if (query.value(1).toString() == column)
+            return true;
+    }
+    return false;
+}
+
 int Database::schemaVersion() const
 {
     QSqlQuery query(m_db);
@@ -175,6 +187,17 @@ bool Database::migrate(QString *error)
     if (current < 3) {
         // Forms and stock units become stable keys instead of translated text (D-032).
         if (!Vocab::normalizeStored(m_db, error)) {
+            m_db.rollback();
+            return false;
+        }
+    }
+
+    if (current < 4) {
+        // What a taken dose took off stock, so undo gives back exactly that (D-033).
+        // NULL = logged before this column existed. Skipped if already there
+        // (a database whose version stamp was rolled back, as in the tests).
+        if (!hasColumn(QStringLiteral("intake"), QStringLiteral("stock_delta"))
+            && !run(QStringLiteral("ALTER TABLE intake ADD COLUMN stock_delta REAL"), error)) {
             m_db.rollback();
             return false;
         }

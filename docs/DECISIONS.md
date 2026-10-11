@@ -487,6 +487,24 @@ Template:
 
 ---
 
+### D-033 — Stock follows units per dose; the amount taken off is recorded
+- **Date:** 2026-10-11 · **Status:** Accepted
+- **Context:** D-023 took one off stock per taken dose. With units per dose (D-031) a schedule
+  of 2 pills drifted when stock is counted in tablets. Undo has to give back the same amount,
+  even if the schedule changed or was deleted in between.
+- **Decision:** A taken dose takes off **1 when the stock unit is `doses`**, otherwise the
+  schedule's **units per dose** (forms without a count stay at 1). Stock never goes below 0;
+  only what was actually there is taken off. **Migration v4** adds a nullable
+  `intake.stock_delta` holding what was taken off (0 for skipped or untracked stock). Undo
+  (taken → skipped, delete) gives back exactly `stock_delta`; rows from before v4 (and
+  older backups) have NULL and give back 1, as they took off 1. Logic lives in
+  `StockLedger` (core, unit-tested).
+- **Consequences:** Refines D-023. Untracked stock now records 0, so starting to track stock
+  later and then undoing an earlier dose no longer adds a phantom unit. Partial-dose
+  tracking for gels or injections (ml) is still out of scope.
+
+---
+
 ## Open questions
 
 Nothing is blocking. Deferred admin:

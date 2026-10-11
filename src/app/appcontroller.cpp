@@ -7,6 +7,7 @@
 #include "core/backup.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
+#include "core/stockledger.h"
 #include "core/vocab.h"
 
 #include <QDBusConnection>
@@ -419,11 +420,19 @@ bool AppController::logDose(int regimenId, int medicationId,
             updated.status = status;
             const bool wasTaken = existing.status == QStringLiteral("taken");
             const bool nowTaken = status == QStringLiteral("taken");
+            // Taking it off stock needs the amount on the log, so consume first;
+            // giving it back happens only once the log no longer says taken.
+            if (nowTaken && !wasTaken)
+                updated.stockDelta = StockLedger::consume(m_store, medicationId, r);
+            else if (wasTaken && !nowTaken)
+                updated.stockDelta = 0.0;
             const bool ok = m_store.updateIntake(updated);
             if (ok) {
-                if (wasTaken != nowTaken)
-                    adjustStock(medicationId, wasTaken ? 1.0 : -1.0);
+                if (wasTaken && !nowTaken)
+                    StockLedger::restore(m_store, existing);
                 emit changed();
+            } else if (nowTaken && !wasTaken) {
+                StockLedger::restore(m_store, updated); // nothing was logged, give it back
             }
             return ok;
         }
@@ -437,12 +446,13 @@ bool AppController::logDose(int regimenId, int medicationId,
     intake.amount = med.strength * unitsPerDose(r);
     intake.unit = med.unit;
     intake.status = status;
+    intake.stockDelta = status == QStringLiteral("taken")
+                        ? StockLedger::consume(m_store, medicationId, r) : 0.0;
     const bool ok = m_store.addIntake(intake);
-    if (ok) {
-        if (status == QStringLiteral("taken"))
-            adjustStock(medicationId, -1.0);
+    if (ok)
         emit changed();
-    }
+    else
+        StockLedger::restore(m_store, intake); // nothing was logged, give it back
     return ok;
 }
 
@@ -453,29 +463,22 @@ bool AppController::clearIntake(int intakeId)
 
 bool AppController::removeIntake(int intakeId)
 {
+    Intake removed;
     const QList<Intake> all = m_store.intakes();
     for (const Intake &intake : all) {
         if (intake.id == intakeId) {
-            if (intake.status == QStringLiteral("taken"))
-                adjustStock(intake.medicationId, 1.0);
+            removed = intake;
             break;
         }
     }
 
     const bool ok = m_store.removeIntake(intakeId);
-    if (ok)
+    if (ok) {
+        if (removed.status == QStringLiteral("taken"))
+            StockLedger::restore(m_store, removed);
         emit changed();
+    }
     return ok;
-}
-
-void AppController::adjustStock(qint64 medicationId, double delta)
-{
-    bool hasStock = false;
-    Stock stock = m_store.stock(medicationId, &hasStock);
-    if (!hasStock)
-        return; // not tracking stock for this medication
-    stock.quantity = qMax(0.0, stock.quantity + delta);
-    m_store.setStock(stock);
 }
 
 bool AppController::saveStock(int medicationId, double quantity, const QString &unit,

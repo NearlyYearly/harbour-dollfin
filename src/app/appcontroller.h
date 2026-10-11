@@ -93,7 +93,6 @@ signals:
 
 private:
     QVariantMap medicationMap(const Medication &medication) const;
-    void adjustStock(qint64 medicationId, double delta);
 
     Database m_database;
     Store m_store;

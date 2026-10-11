@@ -8,7 +8,8 @@ HEADERS += \
     $$PWD/scheduleengine.h \
     $$PWD/ical.h \
     $$PWD/backup.h \
-    $$PWD/vocab.h
+    $$PWD/vocab.h \
+    $$PWD/stockledger.h
 SOURCES += \
     $$PWD/database.cpp \
     $$PWD/store.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/scheduleengine.cpp \
     $$PWD/ical.cpp \
     $$PWD/backup.cpp \
-    $$PWD/vocab.cpp
+    $$PWD/vocab.cpp \
+    $$PWD/stockledger.cpp

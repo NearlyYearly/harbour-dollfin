@@ -10,6 +10,7 @@
 #include "core/database.h"
 #include "core/ical.h"
 #include "core/scheduleengine.h"
+#include "core/stockledger.h"
 #include "core/store.h"
 #include "core/vocab.h"
 
@@ -84,13 +85,13 @@ static void testSchemaAndMigration()
     if (!openOk)
         std::fprintf(stderr, "open failed: %s\n", error.toUtf8().constData());
     CHECK(openOk);
-    CHECK_EQ(db.schemaVersion(), 3);
+    CHECK_EQ(db.schemaVersion(), 4);
 
     // Re-opening an existing database must not re-run migrations.
     db.close();
     Database db2;
     CHECK(db2.open(dir.path() + "/schema.db", &error));
-    CHECK_EQ(db2.schemaVersion(), 3);
+    CHECK_EQ(db2.schemaVersion(), 4);
 }
 
 static void testMedicationCrud()
@@ -624,7 +625,7 @@ static void testMigrationNormalizesLegacyText()
 
     Database db;
     CHECK(db.open(path));
-    CHECK_EQ(db.schemaVersion(), 3);
+    CHECK_EQ(db.schemaVersion(), 4);
     Store store(db);
     CHECK_EQ(store.medication(1).form, QStringLiteral("Pill"));
     CHECK_EQ(store.medication(2).form, QStringLiteral("tablet")); // unknown text kept
@@ -644,6 +645,86 @@ static void testMigrationNormalizesLegacyText()
     Store restoredStore(restored);
     CHECK_EQ(restoredStore.medication(1).form, QStringLiteral("Patch"));
     CHECK_EQ(restoredStore.stock(1, &ok).unit, QStringLiteral("doses"));
+}
+
+static void testStockLedger()
+{
+    QTemporaryDir dir;
+    Database db;
+    CHECK(db.open(dir.path() + "/ledger.db"));
+    Store store(db);
+
+    Medication m;
+    m.name = QStringLiteral("Estradiol");
+    m.form = QStringLiteral("Pill");
+    CHECK(store.addMedication(m));
+
+    Regimen two;
+    two.medicationId = m.id;
+    two.dose = 2.0;
+    Regimen unset;
+    unset.medicationId = m.id;
+
+    // Not tracking stock: nothing is taken off.
+    CHECK_EQ(StockLedger::consume(store, m.id, two), 0.0);
+
+    // Rule (D-033): "doses" takes one per dose, other units take units per dose.
+    Stock stock;
+    stock.medicationId = m.id;
+    stock.unit = QStringLiteral("doses");
+    CHECK_EQ(StockLedger::perDose(stock, two), 1.0);
+    stock.unit = QStringLiteral("tablets");
+    CHECK_EQ(StockLedger::perDose(stock, two), 2.0);
+    CHECK_EQ(StockLedger::perDose(stock, unset), 1.0);
+
+    stock.quantity = 5.0;
+    CHECK(store.setStock(stock));
+    CHECK_EQ(StockLedger::consume(store, m.id, two), 2.0);
+    CHECK_EQ(store.stock(m.id).quantity, 3.0);
+    CHECK_EQ(StockLedger::consume(store, m.id, two), 2.0);
+
+    // Running out takes off only what is left, and undo gives back exactly that.
+    const double last = StockLedger::consume(store, m.id, two);
+    CHECK_EQ(last, 1.0);
+    CHECK_EQ(store.stock(m.id).quantity, 0.0);
+    Intake taken;
+    taken.medicationId = m.id;
+    taken.stockDelta = last;
+    StockLedger::restore(store, taken);
+    CHECK_EQ(store.stock(m.id).quantity, 1.0);
+
+    // Intakes logged before D-033 give back one.
+    Intake legacy;
+    legacy.medicationId = m.id;
+    StockLedger::restore(store, legacy);
+    CHECK_EQ(store.stock(m.id).quantity, 2.0);
+
+    // A taken dose that took nothing off gives nothing back.
+    taken.stockDelta = 0.0;
+    StockLedger::restore(store, taken);
+    CHECK_EQ(store.stock(m.id).quantity, 2.0);
+
+    // stock_delta round-trips; NULL reads back as unknown.
+    Intake logged;
+    logged.medicationId = m.id;
+    logged.takenAt = utc("2026-03-01T08:00");
+    logged.status = QStringLiteral("taken");
+    logged.stockDelta = 0.5;
+    CHECK(store.addIntake(logged));
+    Intake old;
+    old.medicationId = m.id;
+    old.takenAt = utc("2026-02-01T08:00");
+    old.status = QStringLiteral("taken");
+    CHECK(store.addIntake(old));
+    const QList<Intake> intakes = store.intakes(m.id);
+    CHECK_EQ(intakes.size(), 2);
+    if (intakes.size() == 2) {
+        CHECK_EQ(intakes.at(0).stockDelta, 0.5);  // newest first
+        CHECK_EQ(intakes.at(1).stockDelta, -1.0);
+    }
+    logged.stockDelta = 0.0;
+    CHECK(store.updateIntake(logged));
+    CHECK_EQ(store.intakes(m.id).at(0).stockDelta, 0.0);
 }
 
 int main(int argc, char **argv)
@@ -670,6 +751,7 @@ int main(int argc, char **argv)
     testStockAndBackup();
     testVocabNormalize();
     testMigrationNormalizesLegacyText();
+    testStockLedger();
 
     std::fprintf(stderr, "%d checks, %d failure(s)\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
